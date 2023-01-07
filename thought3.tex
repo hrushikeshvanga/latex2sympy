@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{mathtools,amssymb}
+\usepackage{tikz}
+\usepackage{xcolor}
+\pgfplotsset{compat=1.7}
+
+\title{Thought Questions 4}
+\author{Vedant Vyas}
+\date{22 March 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{From Chapter 10, 11, and 12}
+
+\subsection{Linear Classifier} 
+\textit{Chapter 11 introduces the idea of Linear Classifiers. From my understanding, linear classifiers classify data into labels based on input features by constructing a linear function, which could be a point, a line, or a plane. So what will happen if we have data that is not linearly separable, and thus linear classifiers couldn't be used, how would we go about classifying this type of data? Technically, we can still use but it shouldn't be used because of the way it works.  }\\\\
+
+
+\subsection{Lasso and Ridge Regression} 
+
+\textit{:So we have defined Lasso Regressor in the class as c(w) from (equation 10.3) with lasso prior on each weight p(wj) with parameters $\mu = 0$  and scale $b = \sigma^2/ {\lambda}$ which is very similar to ridge with parameter shrinkage, but my question is that parameter shrinkage did show less MSE than ridge for some of the examples but say incase we lose some of the important features, so are there some better ways to shrink the data or not shrink at all in some cases where cross validation may not work always as think about a scenario where our testing data and even the training data doesn't show correlation between $\alpha$ and $\beta$ where $\alpha$ and $\beta$ are features for the sake of this question, so if our testing and training data is not able to find correlation between them but in the real-world testing they show up some corellation, won't this make our model incorrect even after cross-validation?
+}
+\subsection{How can we assume expected value of samples from unknown distribution have same $\mu$ } 
+
+
+
+
+\begin{tikzpicture}
+
+\draw[thick,->] (0,0) -- (4.5,0) node[anchor=north west] {Real Axis};
+\draw[thick,->] (0,0) -- (0,4.5) node[anchor=south east] {Complex Axis};
+\draw[<<->>](0,0) -- (3,3);
+
+
+\end{tikzpicture}
+
+
+
+
+
+
+
+\pgfmathdeclarefunction{gauss}{2}{\pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+\begin{tikzpicture}
+
+\begin{axis}[no markers, domain=0:10, samples=100,
+axis lines*=left, xlabel=Gaussian Curve, ylabel=axis $y$,
+height=6cm, width=10cm,
+xticklabels={Area A,Area B,Area C,Area D, Area E,Area F,Area G}, ytick=\empty,
+enlargelimits=false, clip=false, axis on top,
+grid = major]
+\addplot [fill=cyan!20, draw=none, domain=-3:0] {gauss(0,1)} \closedcycle;
+\addplot [fill=red!20, draw=none, domain=0:3] {gauss(0,1)} \closedcycle;
+\addplot [fill=orange!20, draw=none, domain=-3:-2] {gauss(0,1)} \closedcycle;
+\addplot [fill=yellow!20, draw=none, domain=2:3] {gauss(0,1)} \closedcycle;
+\addplot [fill=blue!20, draw=none, domain=-2:-1] {gauss(0,1)} \closedcycle;
+\addplot [fill=black!20, draw=none, domain=1:2] {gauss(0,1)} \closedcycle;
+\end{axis}
+\end{tikzpicture}
+\\ \\
+In section 3.1 We assume that we get n samples from an unknown distribution p, over outcome space X and these n random variables X1, . . . , Xn, where E [Xi
+] = µ for
+some unknown mean µ. My question is how can we assume this? Is it proven that this always holds or we just assume this to simplify problems in this class? For instance if for example I have 2 samples from the above shown gaussian curve such as sample 1 is taken from Area B and Area C, whereas sample 2 is taken from Area C and Area D. Both of the samples wont have E [Xi] = $\mu$ and since both samples were taken from Gaussian Curve there is a chance that these samples can occur in real-life sampling. So how does this assumption hold?
+
+
+
+\textit{I was thinking about how first and second derivative have a purpose for functions in $\mathbb{R}^N$. Does third derivative has any tangible meaning except rate of change of second derivative? First derivative allows us to find stationary points and second derivative allows us to classify those stationary points. And if it does, what's the use and does that usage works for every function? }\\\\
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+

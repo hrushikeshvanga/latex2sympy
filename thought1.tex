@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{mathtools,amssymb}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+    
+\urlstyle{same}
+\pgfplotsset{compat=1.7}
+
+\title{Thought Questions}
+\author{Vedant Vyas}
+\date{20 September 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{From Chapters 6, 7 and 8}
+
+\subsection{Boundness and Integrability of Probability Density
+functions} 
+
+My thoughts for this question started from $\href{https://mathworld.wolfram.com/GabrielsHorn.html}{Gabriel's Horn}$ , which has infinite surface area but finite volume.  Notes mention that condition to be a pdf is a function \\$p:\chi \to [0, \infty)$ if \\ \[ \int_{\chi}^{} p(x) \,dx  = 1\].\\So nothing in the definition disallows unbounded continuous functions which have finite integral
+\[ \int_{0}^{1} -ln(x) \,dx  = 1\] or \[ \int_{0}^{\infty} e^{-x} \,dx  = 1\] Both of the above mentioned functions are unbounded but their improper integral evaluates to 1. Firstly are these valid probability density functions? 
+In mathematics, we talk about reimann integrability which requires function to be bounded and set of discontinuous points be a set of measure zero. So in this case how do we know the function is integrable?
+
+
+\\\\
+
+
+
+
+
+
+
+
+
+
+\newpage
+\textit{I was wondering about cases where ADAM momentum may not converge with typical values of $\beta = 0.9$
+\[w_{t+1} = w_{t} - \eta g_{t} +\beta(w_{t} - w_{t-1})\]
+Specifically case where we are on a increasing slope so our optimal $w^{*}$ lies before $w_{t}$ and we just crossed the minima so in that case we are on decreasing slope now and $-\eta g_{t}$ will be positive as now optimal $w^{*}$ lies right to our $w_{t}$, but $\beta (w_{t} - w_{t-1})$ will be negative as in this step $w_{t} < w_{t-1}$, and if $\beta (w_{t} - w_{t-1})$ $>$ $-\eta g_{t}$, we will be moving away from optimal solution. So in cases like this, one potential solution would be tweaking value of $\beta$ but won't that increase our optimization complexity by adding one more optimization argument $\beta$ where we are finding optimal value of $\beta$ for faster convergence? Reading more about comparison of different algorithms, I found one $\href{https://arxiv.org/pdf/1705.08292.pdf}{paper}$, which compared ADAGrad, ADAM, and RMSProp. Their problem setting was a binary classification problem where
+the data is linearly separable. They concluded that adaptive methods generalize worse (often significantly worse) than SGD, and converged way slower on test data. So is this worse performance, a result of not having a tuned $\beta$ for the problem? and then finding the $\beta^{*}$ causing the overhead?
+}
+
+\vspace{5cm}
+\vfill
+
+
+
+
+\subsection{14.2.2: Difficulties obtaining direct predictions with Neural Network} 
+
+In notes, a normalization approach is mentioned that each feature is normalized between [0,1]. For each feature j, min and max values, $x_{min, j}$ and $x_{max,j}$, and new features are calculated using $x'_{i,j} = \frac{x_{i,j} - x_{min,j}}{x_{max,j} - x_{min,j}} + 0.1$, which guarantees that $x_{i,j}$ can't be zero for a non-missing value and we make it zero for missing value, so that we can train our NN on this dataset where a feature value of zero means data is missing. Short coming for this method mentioned in notes was that input value 0 is much closer to small feature values, naturally resulting in some generalization between such inputs. I was thinking one way to avoid this would be choosing a value $\alpha$ greater than 0.1 as a offset, so that our alpha is big enough for us to have decent amount of difference between 0 (missing value) and non zero values which are between $[\alpha, \alpha+1]$, where our value of $\alpha$ depends on kind of prediction we are trying to do and if we want to really distinguish the effect of missing value from minimum value. Furthermore, we can introduce a variable $\beta$ to avoid our small values being too similar to big values in our data due to generalization, where our new  $x'_{i,j} = \frac{\beta*(x_{i,j} - x_{min,j})}{x_{max,j} - x_{min,j}} + \alpha$. These $\alpha$ and $\beta$ can be tweaked to get the best results dependent on the problem. Will this approach solve the problem faced by method in the notes? What are the shortcomings of this method other than the added computational complexity due to hyperparameter tuning for $\alpha$ \& $\beta$.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Gradient Descent when using l1 regularizer} 
+
+When notes motivate the need to use proximal methods for non-smooth objectives, it mentions that one way to go around non-differentiability of l1 regularizer is to choose a reasonable choice for gradient at non-differentiable point, say zero, but then notes mention that the descent is slow as there is tendency to jump around zero. I guess we can get around this problem by using ADAM momentum and adaptive stepsize to get a better and stable descent. Something like
+\[w_{t+1} = w_{t} - \eta_{t} c'(w_{t}) +\beta(w_{t} - w_{t-1})\]
+\[c'_{j}(w) = 0 \hspace{1cm} if c'_{j}(w) \in (-\epsilon, \epsilon)\]
+where we decrease $\eta_{t}$ adaptively to take smaller steps when we are near zero

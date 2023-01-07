@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{mathtools,amssymb}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+    
+\urlstyle{same}
+\pgfplotsset{compat=1.7}
+
+\title{Thought Questions}
+\author{Vedant Vyas}
+\date{29 November 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{From Chapters 13, 14 and 15}
+
+\subsection{13.1 Convergence Rate of proximal gradient descent} 
+
+I was wondering if there's some kind of analysis about convergence rate of proximal gradient descent. Certainly the same argument from 13.1 can't be extended to proximal gradient descent as optimization problem is of the form 
+$min_{w \in \mathbf{R^{d}}} c(w) + r(w) $ where we assume c is differentiable everywhere and r can be non-smooth function, where  $\mathcal{F}$ is the constrained set and
+
+
+\[r(w) = 0  \; if \; w \in \mathcal{F} \; else \; \infty \]
+
+Notes mention that for this to work, we need function to be differentiable almost everywhere(equivalently non-differentiable on a set of measure zero). As derivative for $\infty$ is not defined, and this objective = $\infty$ when $w \in  \mathbf{R^{d}} \char`\\ \mathcal{F}$. So this means that for this objective to be almost everywhere differentiable $\mathbf{R^{d}} \char`\\ \mathcal{F}$ needs to be a set of measure zero, which is not necessary as this depends on $\mathcal{F}$, and will mostly be  not a set of measure zero as  $\mathbf{R^{d}}$ is not a set of measure zero. Intuitively convergence of proximal gradient descent makes sense. Since our assumptions mentioned in notes don't hold, we can't extend the same proof to get convergence rate for proximal method So is there some other argument that talks about convergence of proximal method? Or is it a open problem? 
+
+\newpage
+\subsection{14.2.2: Introduction of $\alpha$ in normalization approach} 
+\\\\
+In notes, a normalization approach is mentioned that each feature is normalized between [0,1]. For each feature j, min and max values, $x_{min, j}$ and $x_{max,j}$, and new features are calculated using $x'_{i,j} = \frac{x_{i,j} - x_{min,j}}{x_{max,j} - x_{min,j}} + 0.1$, which guarantees that $x_{i,j}$ can't be zero for a non-missing value and we make it zero for missing value, so that we can train our NN on this dataset where a feature value of zero means data is missing. Short coming for this method mentioned in notes was that input value 0 is much closer to small feature values, naturally resulting in some generalization between such inputs. I was thinking one way to avoid this would be choosing a value $\alpha$ greater than 0.1 as a offset, so that our alpha is big enough for us to have decent amount of difference between 0 (missing value) and non zero values which are between $[\alpha, \alpha+1]$, where our value of $\alpha$ depends on kind of prediction we are trying to do and if we want to really distinguish the effect of missing value from minimum value. This new $\alpha$ allows us to dictate the effect of missing value relative to present values which we feed to our neural network.  $x'_{i,j} = \frac{(x_{i,j} - x_{min,j})}{x_{max,j} - x_{min,j}} + \alpha$. This $\alpha$ can be tweaked to get the best results dependent on the problem. Will this approach solve the problem faced by method in the notes? What are the shortcomings of this method other than the added computational complexity due to hyperparameter tuning for $\alpha$?.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
