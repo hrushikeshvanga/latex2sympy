@@ -360,7 +360,9 @@ def mul_flat(lh, rh):
             args += [rh]
         return sympy.Mul(*args, evaluate=False)
     else:
-        return f'{lh} times {rh}' # Using times for flat multiplication
+        if type(lh) == Integer and type(rh) == Symbol:
+            return f'{lh} {rh}'
+        return f'{lh} times {rh}' # Using times for flat multiplication if the lhs is not an imteger 
 
 
 def mat_mul_flat(lh, rh):
