@@ -623,7 +623,7 @@ def convert_comp(comp):
             return 'opening bracket ' + res + ' closing bracket'
         return convert_expr(comp.group().expr())
     elif comp.abs_group():
-        return sympy.Abs(convert_expr(comp.abs_group().expr()), evaluate=False)
+        return f"Absolute value of ({convert_expr(comp.abs_group().expr())})"  
     elif comp.floor_group():
         return handle_floor(convert_expr(comp.floor_group().expr()))
     elif comp.ceil_group():

@@ -51,7 +51,9 @@ def main():
   "\\int (x+a)",
   "\\int a + b + c dx",
   "\\log_{a^2} x",
-  "a - b"
+  "a - b",
+  "\\emptyset",
+  "\\ln\\left(\\left|x-\\theta\\right|\\right)"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
