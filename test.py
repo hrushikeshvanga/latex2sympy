@@ -45,8 +45,8 @@ def main():
   "\\int \\frac{1}{x} + 1 dx",
   "\\int \\frac{1}{a} + \\frac{1}{b} dx",
   "\\int (x+a)",
-  "\\int a + b + c dx"
-
+  "\\int a + b + c dx",
+  "\\log_{a^2} x"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)

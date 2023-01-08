@@ -952,8 +952,7 @@ def convert_func(func):
                 func_pow = convert_atom(func.supexpr().atom())
 
         if func_pow and should_pow:
-            expr = sympy.Pow(expr, func_pow, evaluate=False)
-
+            expr = f'{expr} raised to the power {func_pow}'                     #sympy.Pow(expr, func_pow, evaluate=False)
         return expr
     elif func.atom_expr_no_supexpr():
         # define a function
@@ -970,6 +969,7 @@ def convert_func(func):
             else:
                 expr = convert_atom(func.supexpr().atom())
             return sympy.Pow(f(*args), expr, evaluate=False)
+            #return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
             allArgs = [*args]
             strArgs = " ".join([str(arg) for arg in allArgs])
@@ -980,9 +980,10 @@ def convert_func(func):
         expr = convert_expr(func.base)
         if func.root:
             r = convert_expr(func.root)
-            return sympy.Pow(expr, 1 / r, evaluate=False)
+            return f"{expr} raised to the power {1/r}"                             #sympy.Pow(expr, 1 / r, evaluate=False)
         else:
-            return sympy.Pow(expr, sympy.S.Half, evaluate=False)
+            return f"{expr} raised to the power {1/2}" 
+            #return sympy.Pow(expr, sympy.S.Half, evaluate=False)
     elif func.FUNC_SUM():
         return handle_sum_or_prod(func, "summation")
     elif func.FUNC_PROD():
