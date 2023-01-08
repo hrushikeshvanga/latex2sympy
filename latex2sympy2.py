@@ -5,6 +5,16 @@ from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
 from sympy import srepr
 
+from sympy import (
+    E, I, oo, pi, sqrt, root, Symbol, Add, Mul, Pow, Abs, factorial, log, Eq, Ne, S, Rational, Integer, UnevaluatedExpr,
+    sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh,
+    csc, sec, Sum, Product, Limit, Integral, Derivative,
+    LessThan, StrictLessThan, GreaterThan, StrictGreaterThan,
+    exp, binomial, Matrix, MatMul, MatAdd,
+    Mod, gcd, lcm, floor, ceiling, Max, Min
+)
+
+
 try:
     from gen.PSParser import PSParser
     from gen.PSLexer import PSLexer
@@ -109,7 +119,8 @@ def latex2sympy(sympy: str, variable_values={}):
     # if not, do default
     else:
         relation = math.relation()
-        print(relation)
+        #PRINT
+        #print(relation)
         return_data = convert_relation(relation)
 
     return return_data
@@ -157,11 +168,14 @@ def convert_relation(rel):
     elif rel.GTE():
         return sympy.GreaterThan(lh, rh, evaluate=False)
     elif rel.EQUAL():
-        return f"{lh} equals {rh}"#sympy.Eq(lh, rh, evaluate=False)
+        return sympy.Eq(lh, rh, evaluate=False) #f"{lh} equals {rh}"#
     elif rel.ASSIGNMENT():
         # !Use Global variances
         if type(lh) == str:
-            print('lh: ', lh, type(lh))
+            #PRINT
+            #print('lh: ', lh, type(lh))
+            # set value
+            return f"{lh} = {rh}"#sympy.Eq(lh, rh, evaluate=False)
             pass
         elif lh.is_Symbol:
             # set value
@@ -313,10 +327,6 @@ def add_flat(lh, rh, isList = False):
             argsString = " ".join(args)
         return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
     else:
-        #No need for this
-        # if isList:
-        #     return f'{lh} and {rh}'
-        #else:
         return f'{lh} + {rh}'  #sympy.Add(lh, rh, evaluate=False)
 
 
@@ -406,6 +416,7 @@ def convert_add(add):
 
 
 def convert_mp(mp):
+
     if hasattr(mp, 'mp'):
         mp_left = mp.mp(0)
         mp_right = mp.mp(1)
@@ -480,7 +491,8 @@ def convert_postfix_list(arr, i=0):
         raise Exception("Index out of bounds")
 
     res = convert_postfix(arr[i])
-    print('res: ', type(res), res)
+    #PRINT
+   # print('res: ', type(res), res)
     if isinstance(res, sympy.Expr) or isinstance(res, sympy.Matrix) or res is sympy.S.EmptySet:
         if i == len(arr) - 1:
             return res  # nothing to multiply by
@@ -524,7 +536,8 @@ def do_subs(expr, at):
     elif at.equality():
         lh = convert_expr(at.equality().expr(0))
         rh = convert_expr(at.equality().expr(1))
-        print(type(lh))
+        #PRINT
+        #print(type(lh))
         return expr.subs(lh, rh)
 
 
@@ -1148,6 +1161,11 @@ if __name__ == '__main__':
     # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
     # latex2latex(r'b_1=\begin{bmatrix}1 \\ 2 \\ 3 \\ 4\end{bmatrix}')
     # tex = r"(x+2)|_{x=y+1}"
+
+    test5 =  "a \\div b"
+    math = latex2sympy(test5)
+    print(math)
+
     tex = r"\frac{a}{b} + \frac{c}{d}"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
@@ -1234,8 +1252,41 @@ if __name__ == '__main__':
 
     text = r"\mathbb{R}^N"
 
+
+    
+    print(math)
     math = latex2sympy(text)
-    print(math) 
+    testList = [
+        r"0",
+        r"1",
+        r"5-3",
+        r"x^2",
+        r"2x",
+        r"a \cdot b",
+        r"a \div b",
+        r"a^2 + b^2 = c^2",
+        r"\artanh(a)",
+        r"\operatorname{ceil}(b)",
+        r"\operatorname{arcsinh}(a)",
+        r"\operatorname{arccosh}(a)",
+        r"\operatorname{arctanh}(a)",
+        r"\operatorname{arsinh}(a)",
+        r"\operatorname{arcosh}(a)",
+        r"\operatorname{artanh}(a)",
+        r"\operatorname{gcd}(a, b)",
+        r"\operatorname{lcm}(a, b)",
+        r"\operatorname{gcd}(a,b)",
+        r"\operatorname{lcm}(a,b)",
+        r"\operatorname{floor}(a)",
+        r"\frac{d}{dx} x",
+        r"||x||",
+        r"\int^b_a x dx",
+        r"\\ln x"
+    ]
+    for tex in testList:
+        math = latex2sympyStr(tex)
+        print(tex, math)
+    
     #print("math:", latex(math.doit()))
     #print("math_type:", type(math.doit()))
     # print("shape:", (math.doit()).shape)
