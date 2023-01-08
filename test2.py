@@ -19,7 +19,12 @@ def main():
 
         "---",
 
-        
+        # r"f(x^2)",
+        # r"\sqrt{\frac{1}{x}}",
+        r"\sum_{n = 0}^{\infty} \frac{1}{n!}",
+        r"\prod^c_{a = b} x^{a!}",
+        r"\log{e^{2*x!}}"
+
     ]
 
 
