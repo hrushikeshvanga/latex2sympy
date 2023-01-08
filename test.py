@@ -60,7 +60,8 @@ def main():
   "\\binom{\\theta}{\\gamma}",
   "128*10^300\\mod 876123",
   "123123\\mod -541",
-  "\\sin(x)*e^x"
+  "\\sin(x)*e^x",
+  "f(x, y, z)"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)

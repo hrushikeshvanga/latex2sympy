@@ -550,8 +550,7 @@ def do_subs(expr, at):
     elif at.equality():
         lh = convert_expr(at.equality().expr(0))
         rh = convert_expr(at.equality().expr(1))
-        #PRINT
-        #print(type(lh))
+      
         return expr.subs(lh, rh)
 
 
@@ -998,9 +997,14 @@ def convert_func(func):
             argsString = [str(arg) for arg in args]
             String = ','.join(argsString)
             print(String)
-            andPos = String[::-1].find(',')
+            andPos = -1
+            for i in range(len(String)-1, -1, -1):
+                if String[i] == ',':
+                    andPos = i
+                    break  
+
             if andPos != -1:
-                String = String[:-andPos] + ' and ' + String[-andPos+1:]
+                String = String[:andPos] + ' and ' + String[andPos+1:]
             return f"{f} of {String}"
         
     elif func.FUNC_INT():
@@ -1218,9 +1222,7 @@ def latex2sympyStr(tex):
             return "Cannot get String representation of result"
 
 if __name__ == '__main__':
-    # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
-    # latex2latex(r'b_1=\begin{bmatrix}1 \\ 2 \\ 3 \\ 4\end{bmatrix}')
-    # tex = r"(x+2)|_{x=y+1}"
+  
 
     test5 =  "a \\div b"
     test6 = "100!"
