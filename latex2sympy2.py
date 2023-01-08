@@ -332,7 +332,7 @@ def sub_flat(lh, rh, isList = False):
             argsString = " ".join(args)
         return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
     else:
-        return f'{lh} minus {rh}'  #sympy.Add(lh, rh, evaluate=False)
+        return f'{lh} minus {rh}' 
 
 def mat_add_flat(lh, rh):
     if hasattr(lh, 'is_MatAdd') and lh.is_MatAdd or hasattr(rh, 'is_MatAdd') and rh.is_MatAdd:
@@ -361,7 +361,7 @@ def mul_flat(lh, rh):
             args = args + list(rh.args)
         else:
             args += [rh]
-        return sympy.Mul(*args, evaluate=False)
+        return f'Multiplication of open bracket {"".join(args)} close bracket '                     #sympy.Mul(*args, evaluate=False)
     else:
         if (type(lh) == Integer or type(lh) == Float) and type(rh) == Symbol:
             return f'{lh} {rh}'
@@ -447,11 +447,11 @@ def convert_mp(mp):
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if type(lh) == str or type(rh) == str:
-            return f'{lh} over {rh}' #bad fix for strings
+            return f'{lh} over {rh}'
         elif lh.is_Matrix or rh.is_Matrix:
             return sympy.MatMul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
         else:
-            return f'{lh} over {rh}'                                         #   sympy.Mul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
+            return f'{lh} over {rh}'                                       
     elif mp.CMD_MOD():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
@@ -981,13 +981,13 @@ def convert_func(func):
         return expr
     elif func.atom_expr_no_supexpr():
         # define a function
-        print(func.atom_expr_no_supexpr().getText())
+       
         f = sympy.Function(func.atom_expr_no_supexpr().getText())
         # args
         args = func.func_common_args().getText().split(",")
         if args[-1] == '':
             args = args[:-1]
-        # args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
+        args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
         # supexpr
         if func.supexpr():
             if func.supexpr().expr():
@@ -997,7 +997,8 @@ def convert_func(func):
             #return sympy.Pow(f(*args), expr, evaluate=False)
             return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
-            return f"{f} of {' '.join(args)}"
+            argsString = [str(arg) for arg in args]
+            return f"{f} of {' '.join(argsString)}"
         
     elif func.FUNC_INT():
         return handle_integral(func)

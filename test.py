@@ -3,7 +3,7 @@ from latex2sympy2 import latex2sympyStr
 
 def main():
 
-    test = "a - b"
+    test = "f(x^2)"
     print(test)
     print(latex2sympyStr(test))
     testList = [
