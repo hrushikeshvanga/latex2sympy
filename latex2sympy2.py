@@ -201,7 +201,7 @@ def convert_relation(rel):
             raise Exception("Don't support this form of definition of matrix symbol.")
         return lh
     elif rel.UNEQUAL():
-        return sympy.Ne(lh, rh, evaluate=False)
+        return f'{lh} not equals {rh}'                      #sympy.Ne(lh, rh, evaluate=False)
 
 
 def convert_expr(expr):
@@ -980,8 +980,6 @@ def convert_func(func):
             expr = f'{expr} raised to the power {func_pow}'                
         return expr
     elif func.atom_expr_no_supexpr():
-        # define a function
-       
         f = sympy.Function(func.atom_expr_no_supexpr().getText())
         # args
         args = func.func_common_args().getText().split(",")
@@ -989,7 +987,7 @@ def convert_func(func):
             args = args[:-1]
         args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
         # supexpr
-        if func.supexpr():
+        if func.supexpr(): #potentially need to be changed
             if func.supexpr().expr():
                 expr = convert_expr(func.supexpr().expr())
             else:
@@ -998,7 +996,12 @@ def convert_func(func):
             return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
             argsString = [str(arg) for arg in args]
-            return f"{f} of {' '.join(argsString)}"
+            String = ','.join(argsString)
+            print(String)
+            andPos = String[::-1].find(',')
+            if andPos != -1:
+                String = String[:-andPos] + ' and ' + String[-andPos+1:]
+            return f"{f} of {String}"
         
     elif func.FUNC_INT():
         return handle_integral(func)
@@ -1221,10 +1224,7 @@ if __name__ == '__main__':
 
     test5 =  "a \\div b"
     test6 = "100!"
-    math = latex2sympy(test5)
-    print(math)
-    math = latex2sympy(test6)
-    print(math)
+  
 
     tex = r"\frac{a}{b} + \frac{c}{d}"
     # print("latex2latex:", latex2latex(tex))
