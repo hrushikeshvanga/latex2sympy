@@ -696,14 +696,17 @@ def convert_atom(atom):
         # for matrix symbol
         matrix_symbol = None
         global var
-        if atom_text + subscript_text in var:
-            try:
-                rh = var[atom_text + subscript_text]
-                shape = sympy.shape(rh)
-                matrix_symbol = sympy.MatrixSymbol(atom_text + subscript_text, shape[0], shape[1])
-                variances[matrix_symbol] = variances[atom_symbol]
-            except:
-                pass
+        try:
+            if atom_text + subscript_text in var:
+                try:
+                    rh = var[atom_text + subscript_text]
+                    shape = sympy.shape(rh)
+                    matrix_symbol = sympy.MatrixSymbol(atom_text + subscript_text, shape[0], shape[1])
+                    variances[matrix_symbol] = variances[atom_symbol]
+                except:
+                    pass
+        except:
+            pass
 
         # find the atom's superscript, and return as a Pow if found
         if atom_expr.supexpr():

@@ -53,7 +53,8 @@ def main():
   "\\log_{a^2} x",
   "a - b",
   "\\emptyset",
-  "\\ln\\left(\\left|x-\\theta\\right|\\right)"
+  "\\ln\\left(\\left|x-\\theta\\right|\\right)",
+  r'\int{a}^b\int{c}^d f(x)dxdy' 
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
