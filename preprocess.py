@@ -1,9 +1,10 @@
 import re
 from threading import Thread, Lock, Event
-from TexSoup import TexSoup
 import latex2sympy2
 import hashlib
 from antlr4.error.Errors import NoViableAltException
+from pylatexenc.latex2text import LatexNodes2Text
+
 
 # Output mutex
 output_lock = Lock()
@@ -53,7 +54,8 @@ def main():
 
 
         equation = file[nstart:nend]
-
+        equation = equation.replace("...", " something ")
+        equation = equation.replace("\\", "")
         hashed = get_hash(equation.encode('utf-8'))
         map[hashed] = r"{}".format(equation)
 
@@ -63,14 +65,9 @@ def main():
     # Spawn workers
     spawn_workers()
 
-    # # Join and wait for all threads
-    # for thread in threads:
-    #     thread.join()
-
     # write to output
     event.wait()
     final = get_final_text()
-
     output_file = open("output.text", "w")
     output_file.write(final)
     output_file.close()
@@ -135,15 +132,13 @@ def spawn_workers():
     for i in range(num_threads):
         t = Thread(target=thread_writer, args=[])
         t.start()
-        # t.run()
-        # threads.append(t)
         t.join()
 
 
 
 def get_final_text():
-    soup = TexSoup(file)
-    return "\n".join(soup.text)
+    global file
+    return LatexNodes2Text().latex_to_text(file)
 
 
 if __name__ == "__main__":
