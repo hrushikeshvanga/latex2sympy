@@ -45,7 +45,22 @@ def main():
         r"2 4 y",
 
 
-        
+        "---",
+        # Matrices
+        r"\begin{matrix}1&2\\3&4\end{matrix}",
+        r"\begin{bmatrix}1&2\\3&4\end{bmatrix}",
+        r"\begin{pmatrix}1&2\\3&4\end{pmatrix}",
+        # r"\begin{matrix}x&x^2\\\sqrt{x}&x\end{matrix}",
+        r"\begin{matrix}\sqrt{x}\\\sin(\theta)\end{matrix}",
+
+        "---",
+        r"\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}",
+        r"\\left{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right}",
+        r"\\left\\{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right\\}",
+
+
+        r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
+
 
 
     ]
