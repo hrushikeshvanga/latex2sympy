@@ -157,10 +157,13 @@ def convert_relation(rel):
     elif rel.GTE():
         return sympy.GreaterThan(lh, rh, evaluate=False)
     elif rel.EQUAL():
-        return sympy.Eq(lh, rh, evaluate=False)
+        return f"{lh} equals {rh}"#sympy.Eq(lh, rh, evaluate=False)
     elif rel.ASSIGNMENT():
         # !Use Global variances
-        if lh.is_Symbol:
+        if type(lh) == str:
+            print('lh: ', lh, type(lh))
+            pass
+        elif lh.is_Symbol:
             # set value
             variances[lh] = rh
             var[str(lh)] = rh
@@ -458,7 +461,10 @@ def convert_unary(unary):
         return convert_unary(nested_unary)
     elif unary.SUB():
         tmp_convert_nested_unary = convert_unary(nested_unary)
-        if tmp_convert_nested_unary.is_Matrix:
+        print('tmp: ', tmp_convert_nested_unary, type(tmp_convert_nested_unary))
+        if type(tmp_convert_nested_unary) == str:
+            return f'negative {tmp_convert_nested_unary}'
+        elif tmp_convert_nested_unary.is_Matrix:
             return mat_mul_flat(-1, tmp_convert_nested_unary, evaluate=False)
         else:
             if tmp_convert_nested_unary.func.is_Number:
@@ -587,7 +593,7 @@ def convert_comp(comp):
     if comp.group():
         res = convert_expr(comp.group().expr())
         if type(res) == str:
-            return 'left bracket ' + res + ' right bracket'
+            return 'opening bracket ' + res + ' closing bracket'
         return convert_expr(comp.group().expr())
     elif comp.abs_group():
         return sympy.Abs(convert_expr(comp.abs_group().expr()), evaluate=False)
@@ -862,13 +868,13 @@ def convert_func(func):
                 base = 10
             elif name == "ln":
                 base = sympy.E
-            expr = sympy.log(arg, base, evaluate=False)
+            expr = f"log of {arg} with base {base}"#sympy.log(arg, base, evaluate=False)
         elif name in ["exp", "exponentialE"]:
-            expr = sympy.exp(arg)
+            expr = f"euler's constant raised to the {arg}"   #sympy.exp(arg)
         elif name == "floor":
-            expr = handle_floor(arg)
+            expr = f"floor of {arg}"#handle_floor(arg)
         elif name == "ceil":
-            expr = handle_ceil(arg)
+            expr = f"ceiling of {arg}"#handle_ceil(arg)
 
         func_pow = None
         should_pow = True
@@ -1013,9 +1019,9 @@ def handle_sum_or_prod(func, name):
         end = convert_atom(func.supexpr().atom())
 
     if name == "summation":
-        return sympy.Sum(val, (iter_var, start, end))
+        return f"The sum of {iter_var} from {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
     elif name == "product":
-        return sympy.Product(val, (iter_var, start, end))
+        return f"The iterated product of {iter_var} from {start} to {end} of {val}" #sympy.Product(val, (iter_var, start, end))
 
 
 def handle_limit(func):
@@ -1194,7 +1200,7 @@ if __name__ == '__main__':
 '''
     math = latex2sympy(matrix)
     #math = math.subs(variances)
-    brac = r'''(n*(n + 1) + n + 2)'''
+    brac = r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)'''
     # print("var:", variances)
     print("raw_math:", math)
 
@@ -1202,12 +1208,34 @@ if __name__ == '__main__':
     
     print(math)
 
-    complicatedLatex = r'''\lim_{n\to3} \frac{(n+1)^n}{n^n}'''
+    complicatedLatex = r'''\lim_{n\to3} \exp(-(n+1)^n)'''
+
+    unarytex = r'''+c'''
   #  
     math = latex2sympy(complicatedLatex)
     
     print(math)
 
+
+    unarytex = r'''+d*3'''
+  #  
+    math = latex2sympy(unarytex)
+    
+    print(math)
+
+    summation= r"\sum_{n=1}^{\infty} 2^{-n} = 1"
+
+    math = latex2sympy(summation)
+    
+    equals = r"n=1"
+
+    math = latex2sympy(equals)
+    print(math)
+
+    text = r"\mathbb{R}^N"
+
+    math = latex2sympy(text)
+    print(math) 
     #print("math:", latex(math.doit()))
     #print("math_type:", type(math.doit()))
     # print("shape:", (math.doit()).shape)
