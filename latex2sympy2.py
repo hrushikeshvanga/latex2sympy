@@ -730,7 +730,7 @@ def convert_atom(atom):
     elif atom.SYMBOL():
         s = atom.SYMBOL().getText().replace("\\$", "").replace("\\%", "")
         if s == "\\infty":
-            return sympy.oo
+            return "infinity" #sympy.oo
         elif s == '\\pi':
             return sympy.pi
         elif s == '\\emptyset':
@@ -991,7 +991,7 @@ def convert_func(func):
                 expr = convert_expr(func.supexpr().expr())
             else:
                 expr = convert_atom(func.supexpr().atom())
-            #return sympy.Pow(f(*args), expr, evaluate=False)
+            
             return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
             argsString = [str(arg) for arg in args]
