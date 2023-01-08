@@ -40,6 +40,9 @@ var = {}
 VARIABLE_VALUES = {}
 
 
+def has_numbers(inputString):
+    return bool(re.search(r'\d', inputString))
+
 def set_real(value):
     global is_real
     is_real = value
@@ -410,10 +413,11 @@ def convert_add(add):
             # If we want to force ordering for variables this should be:
             # return Sub(lh, rh, evaluate=False)
             if not rh.is_Matrix and rh.func.is_Number:
-                return sub_flat(lh, rh)
+                rh = -rh
+                return add_flat(lh, rh)
             else:
-                rh = mul_flat(-1, rh)
-            return add_flat(lh, rh)
+                #rh = mul_flat(-1, rh)
+                return sub_flat(lh, rh)
     else:
         return convert_mp(add.mp())
 
@@ -471,11 +475,12 @@ def convert_unary(unary):
         postfix = [first] + tail
     else:
         postfix = unary.postfix()
-
+    
     if unary.ADD():
         return convert_unary(nested_unary)
     elif unary.SUB():
         tmp_convert_nested_unary = convert_unary(nested_unary)
+        print(tmp_convert_nested_unary, type(tmp_convert_nested_unary))
         if type(tmp_convert_nested_unary) == str:
             return f'negative {tmp_convert_nested_unary}'
         elif tmp_convert_nested_unary.is_Matrix:
@@ -872,31 +877,39 @@ def convert_func(func):
         # change arc<trig> -> a<trig>
         if name in ["arcsin", "arccos", "arctan", "arccsc", "arcsec",
                     "arccot"]:
-            name = "a" + name[3:]
-            expr = getattr(sympy.functions, name)(arg, evaluate=False)
-            print(type(expr))
+            #name = "a" + name[3:]
+           # expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            if name == "arccsc":
+                expr =  f'{name[:3]}-{"cosec"} of ({arg})'
+            else:
+                expr = f'{name[:3]}-{name[3:]} of ({arg})'
+            #print(type(expr))
         elif name in ["arsinh", "arcosh", "artanh"]:
-            name = "a" + name[2:]
-            expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            name = "arc-" + name[2:]
+            expr = f'{name} of ({arg})'
+            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
         elif name in ["arcsinh", "arccosh", "arctanh"]:
-            name = "a" + name[3:]
-            expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            expr = f'{name[:3]}-{name[3:]} of ({arg})'
+           # name = "a" + name[3:]
+            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
         elif name == "operatorname":
             operatorname = func.func_normal_single_arg().func_operator_name.getText()
 
             if operatorname in ["arsinh", "arcosh", "artanh"]:
-                operatorname = "a" + operatorname[2:]
-                expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
+                operatorname = "arc-" + operatorname[2:]
+                expr = f'{operatorname} of ({arg})'
+                #expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
             elif operatorname in ["arcsinh", "arccosh", "arctanh"]:
-                operatorname = "a" + operatorname[3:]
-                expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
+                operatorname = "arc-" + operatorname[3:]
+                expr = f'{operatorname} of ({arg})'
+                #expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
             elif operatorname == "floor":
                 expr = handle_floor(arg)
             elif operatorname == "ceil":
                 expr = handle_ceil(arg)
         elif name in ["log", "ln"]:
             if func.subexpr():
-                if func.subexpr().atom():
+                if func.subexpr().atom(): #potentially need to be changed
                     base = convert_atom(func.subexpr().atom())
                 else:
                     base = convert_expr(func.subexpr().expr())
@@ -915,7 +928,7 @@ def convert_func(func):
         func_pow = None
         should_pow = True
         if func.supexpr():
-            if func.supexpr().expr():
+            if func.supexpr().expr():   #potentially need to be changed
                 func_pow = convert_expr(func.supexpr().expr())
             else:
                 func_pow = convert_atom(func.supexpr().atom())
@@ -924,10 +937,12 @@ def convert_func(func):
             if func_pow == -1:
                 name = "a" + name
                 should_pow = False
-            expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            expr = f'{name} of ({arg})'
+            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
 
         if func_pow and should_pow:
-            expr = sympy.Pow(expr, func_pow, evaluate=False)
+            expr = f"{expr} raised to the power {func_pow}"
+            #expr = sympy.Pow(expr, func_pow, evaluate=False)
 
         return expr
 
@@ -937,6 +952,7 @@ def convert_func(func):
         else:
             args = func.func_multi_arg_noparens().split(",")
 
+        #maybe need to be changed
         args = list(map(lambda arg: latex2sympy(arg, VARIABLE_VALUES), args))
         name = func.func_normal_multi_arg().start.text[1:]
 
@@ -948,7 +964,7 @@ def convert_func(func):
             expr = handle_gcd_lcm(name, args)
         elif name in ["max", "min"]:
             name = name[0].upper() + name[1:]
-            expr = getattr(sympy.functions, name)(*args, evaluate=False)
+            expr =  f"{name} of {''.join(args)}"            #getattr(sympy.functions, name)(*args, evaluate=False)
 
         func_pow = None
         should_pow = True
@@ -976,11 +992,11 @@ def convert_func(func):
                 expr = convert_expr(func.supexpr().expr())
             else:
                 expr = convert_atom(func.supexpr().atom())
-            return sympy.Pow(f(*args), expr, evaluate=False)
-            #return f"({f} evaluated at {args}) raised to the {expr}" 
+            #return sympy.Pow(f(*args), expr, evaluate=False)
+            return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
             return f"{f} of {' '.join(args)}"
-            return f(*args)
+        
     elif func.FUNC_INT():
         return handle_integral(func)
     elif func.FUNC_SQRT():
@@ -1046,9 +1062,9 @@ def handle_integral(func):
             upper = convert_atom(func.supexpr().atom())
         else:
             upper = convert_expr(func.supexpr().expr())
-        return f"Integral of {integrand} from {lower} to {upper} w.r.t {int_var}"                         #sympy.Integral(integrand, (int_var, lower, upper))
+        return f"Integral of {integrand} from {lower} to {upper} with respect to {int_var}"                         #sympy.Integral(integrand, (int_var, lower, upper))
     else:
-        return f"Integral of {integrand} w.r.t {int_var}"                                                # sympy.Integral(integrand, int_var)
+        return f"Integral of {integrand} with respect to {int_var}"                                                # sympy.Integral(integrand, int_var)
 
 
 def handle_sum_or_prod(func, name):
@@ -1112,7 +1128,10 @@ def handle_gcd_lcm(f, args):
     args = tuple(map(sympy.nsimplify, args))
 
     # gcd() and lcm() don't support evaluate=False
-    return sympy.UnevaluatedExpr(getattr(sympy, f)(args))
+    if f == "gcd":
+        return "GCD of " + str(args)
+    else:
+        return "LCM of " +str(args)                                     #sympy.UnevaluatedExpr(getattr(sympy, f)(args))
 
 
 def handle_floor(expr):
@@ -1121,16 +1140,16 @@ def handle_floor(expr):
 
     expr: Expr - sympy expression as an argument to floor()
     """
-    return sympy.functions.floor(expr, evaluate=False)
+    return  f"floor of {expr}"                    #sympy.functions.floor(expr, evaluate=False)
 
 
 def handle_ceil(expr):
     """
-    Apply ceil() then return the ceil-ed expression.
+    Apply ceil() then return the ceil-ed ex#pression.
 
     expr: Expr - sympy expression as an argument to ceil()
     """
-    return sympy.functions.ceiling(expr, evaluate=False)
+    return f"ceiling of {expr}"                                                #sympy.functions.ceiling(expr, evaluate=False)
 
 
 def get_differential_var(d):
