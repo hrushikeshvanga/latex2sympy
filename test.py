@@ -33,7 +33,7 @@ def main():
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
-        print(tex, math)
+        print(tex, "-->", math)
 
 
         math = latex2sympyStr(tex)

@@ -160,15 +160,15 @@ def convert_relation(rel):
     lh = convert_relation(rel.relation(0))
     rh = convert_relation(rel.relation(1))
     if rel.LT():
-        return f'{lh} is strictly less than {rh}'           #sympy.StrictLessThan(lh, rh, evaluate=False)
+        return f'{lh} is strictly less than {rh}'
     elif rel.LTE():
-        return f'{lh} is less than {rh}'                        #sympy.LessThan(lh, rh, evaluate=False)
+        return f'{lh} is less or equal to than {rh}'
     elif rel.GT():
-        return f'{lh} is greater than {rh}'                             #sympy.StrictGreaterThan(lh, rh, evaluate=False)
+        return f'{lh} is strictly greater than {rh}'
     elif rel.GTE():
-        return  f'{lh} is greater than equal to {rh}'                           #sympy.GreaterThan(lh, rh, evaluate=False)
+        return  f'{lh} is greater than equal to {rh}'
     elif rel.EQUAL():
-        return f'{lh} equals {rh}' #sympy.Eq(lh, rh, evaluate=False)                         #f"{lh} equals {rh}"#
+        return f'{lh} equals {rh}'
     elif rel.ASSIGNMENT():
         # !Use Global variances
         if type(lh) == str:
@@ -375,7 +375,7 @@ def mul_flat(lh, rh):
             args += [rh]
         return sympy.Mul(*args, evaluate=False)
     else:
-        return f'{lh} times {rh}' #sympy.Mul(lh, rh, evaluate=False)
+        return f'{lh} times {rh}' # Using times for flat multiplication
 
 
 def mat_mul_flat(lh, rh):
@@ -429,7 +429,7 @@ def convert_add(add):
                 return sub_flat(lh, rh)
             else:
                 rh = mul_flat(-1, rh)
-                return add_flat(lh, rh)
+            return add_flat(lh, rh)
     else:
         return convert_mp(add.mp())
 
@@ -448,7 +448,7 @@ def convert_mp(mp):
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if type(lh) == str or type(rh) == str:
-            return f'{lh} times {rh}' #bad fix for strings
+            return f'{lh} dot {rh}' #bad fix for strings. Also, using dot for matrix product
         elif lh.is_Matrix or rh.is_Matrix:
             return mat_mul_flat(lh, rh)
         else:
@@ -492,7 +492,6 @@ def convert_unary(unary):
         return convert_unary(nested_unary)
     elif unary.SUB():
         tmp_convert_nested_unary = convert_unary(nested_unary)
-        print('tmp: ', tmp_convert_nested_unary, type(tmp_convert_nested_unary))
         if type(tmp_convert_nested_unary) == str:
             return f'negative {tmp_convert_nested_unary}'
         elif tmp_convert_nested_unary.is_Matrix:
@@ -722,6 +721,15 @@ def convert_atom(atom):
                 func_pow = convert_expr(supexpr.expr())
             else:
                 func_pow = convert_atom(supexpr.atom())
+
+            if func_pow == 1:
+                return f"{atom_symbol}"
+            elif func_pow == 2:
+                return f"{atom_symbol} squared"
+            elif func_pow == 3:
+                return f"{atom_symbol} cubed"
+            elif func_pow == -1:
+                return f"{atom_symbol} inverse"
             return f"{atom_symbol} to the power {func_pow}"#sympy.Pow(atom_symbol, func_pow, evaluate=False)
 
         return atom_symbol if not matrix_symbol else matrix_symbol
@@ -1220,7 +1228,3 @@ if __name__ == '__main__':
 
     tex = r"a * b + c * d + e * c * d"
     # print("latex2latex:", latex2latex(tex))
-
-  
-    
-    
