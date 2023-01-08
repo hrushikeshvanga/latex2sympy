@@ -160,15 +160,15 @@ def convert_relation(rel):
     lh = convert_relation(rel.relation(0))
     rh = convert_relation(rel.relation(1))
     if rel.LT():
-        return sympy.StrictLessThan(lh, rh, evaluate=False)
+        return f'{lh} is strictly less than {rh}'           #sympy.StrictLessThan(lh, rh, evaluate=False)
     elif rel.LTE():
-        return sympy.LessThan(lh, rh, evaluate=False)
+        return f'{lh} is less than {rh}'                        #sympy.LessThan(lh, rh, evaluate=False)
     elif rel.GT():
-        return sympy.StrictGreaterThan(lh, rh, evaluate=False)
+        return f'{lh} is greater than {rh}'                             #sympy.StrictGreaterThan(lh, rh, evaluate=False)
     elif rel.GTE():
-        return sympy.GreaterThan(lh, rh, evaluate=False)
+        return  f'{lh} is greater than equal to {rh}'                           #sympy.GreaterThan(lh, rh, evaluate=False)
     elif rel.EQUAL():
-        return sympy.Eq(lh, rh, evaluate=False) #f"{lh} equals {rh}"#
+        return f'{lh} equals {rh}' #sympy.Eq(lh, rh, evaluate=False)                         #f"{lh} equals {rh}"#
     elif rel.ASSIGNMENT():
         # !Use Global variances
         if type(lh) == str:
@@ -511,8 +511,6 @@ def convert_postfix_list(arr, i=0):
             return res
         else:
             rh = convert_postfix_list(arr, i + 1)
-            print('rh: ', type(rh), rh)
-            print('res: ', type(res), res)
             if type(rh) == str or type(res) == str:
                 return mul_flat(res, rh)
             elif res.is_Matrix or rh.is_Matrix:
@@ -557,7 +555,7 @@ def convert_postfix(postfix):
         if op.BANG():
             if isinstance(exp, list):
                 raise Exception("Cannot apply postfix to derivative")
-            exp = sympy.factorial(exp, evaluate=False)
+            exp = f"{exp} factorial" #sympy.factorial(exp, evaluate=False)
         elif op.eval_at():
             ev = op.eval_at()
             at_b = None
@@ -1168,7 +1166,10 @@ if __name__ == '__main__':
     # tex = r"(x+2)|_{x=y+1}"
 
     test5 =  "a \\div b"
+    test6 = "100!"
     math = latex2sympy(test5)
+    print(math)
+    math = latex2sympy(test6)
     print(math)
 
     tex = r"\frac{a}{b} + \frac{c}{d}"
