@@ -54,7 +54,10 @@ def main():
   "a - b",
   "\\emptyset",
   "\\ln\\left(\\left|x-\\theta\\right|\\right)",
-  r'\int{a}^b\int{c}^d f(x)dxdy' 
+  r'\int{a}^b\int{c}^d f(x)dxdy' ,
+  "\\binom{16}{2}",
+  "\\binom{16+2}{\\frac{4}{2}}",
+  "\\binom{\\theta}{\\gamma}",
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
