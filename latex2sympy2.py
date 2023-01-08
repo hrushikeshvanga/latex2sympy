@@ -511,7 +511,11 @@ def convert_postfix_list(arr, i=0):
             return res
         else:
             rh = convert_postfix_list(arr, i + 1)
-            if res.is_Matrix or rh.is_Matrix:
+            print('rh: ', type(rh), rh)
+            print('res: ', type(res), res)
+            if type(rh) == str or type(res) == str:
+                return mul_flat(res, rh)
+            elif res.is_Matrix or rh.is_Matrix:
                 return mat_mul_flat(res, rh)
             else:
                 return mul_flat(res, rh)
