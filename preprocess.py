@@ -1,6 +1,6 @@
-import re
+import re, os
 from threading import Thread, Lock, Event
-import latex2sympy2
+import latex2sympy2, tts
 import hashlib
 
 # Output mutex
@@ -17,8 +17,7 @@ file = ""
 
 def preprocess():
     global file, threads, event
-    filename = input()
-    ffile = open(filename, "r")
+    ffile = open("input.tex", "r")
     file = ffile.read()
 
     ffile.close()
@@ -65,18 +64,23 @@ def preprocess():
 
         file = file[:start] + hashed + file[end:]
 
-    # st = r"\frac{\partial^2f}{\partial x^2}"
-    # print(latex2sympy2.latex2sympyStr(st))
-    # return
 
     # Spawn workers
     spawn_workers()
 
     # write to output
     event.wait()
-    output_file = open("output.tex", "w")
-    output_file.write(file)
-    output_file.close()
+
+    # Write to output.tex
+    output = open("output.tex", "w")
+    output.write(file)
+    output.close()
+
+    # run system pandoc to generate text
+    os.system('pandoc -s output.tex -o textlatex.txt -t plain')
+    
+    # Generate mp3
+    tts.generate_mp3()
     
 
 
@@ -123,7 +127,7 @@ def convert_to_english(eq):
         print(e)
         print("eq Exception=", eq)
         # st = latex2text.latex2text('$'+eq+'$')
-        return "**Error**"
+        return ""
     
         
 
