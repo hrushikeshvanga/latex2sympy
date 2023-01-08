@@ -527,6 +527,7 @@ def convert_postfix_list(arr, i=0):
             raise Exception("Expected expression for derivative")
         else:
             expr = convert_postfix_list(arr, i + 1)
+            return f"The derivative of {expr} with respect to {wrt}"
             return sympy.Derivative(expr, wrt)
 
 
@@ -820,27 +821,33 @@ def convert_frac(frac):
         if (diff_op and frac.upper.start == frac.upper.stop and
             frac.upper.start.type == PSLexer.LETTER_NO_E and
                 frac.upper.start.text == 'd'):
-            return [wrt]
+            return [f"{wrt}"]
         elif (partial_op and frac.upper.start == frac.upper.stop and
               frac.upper.start.type == PSLexer.SYMBOL and
               frac.upper.start.text == '\\partial'):
-            return [wrt]
+            return [f"{wrt}"]
         upper_text = rule2text(frac.upper)
 
         expr_top = None
+        partial_derivative = False
         if diff_op and upper_text.startswith('d'):
             expr_top = latex2sympy(upper_text[1:])
         elif partial_op and frac.upper.start.text == '\\partial':
             expr_top = latex2sympy(upper_text[len('\\partial'):])
+            partial_derivative = True
         if expr_top:
-            return sympy.Derivative(expr_top, wrt)
+            outStr = "The "
+            if partial_derivative:
+                outStr += "partial "
+            return outStr + f"derivative of {expr_top} with respect to {wrt}"
+
 
     expr_top = convert_expr(frac.upper)
     expr_bot = convert_expr(frac.lower)
     if type(expr_top) == str or type(expr_bot) == str:
         return f'{expr_top} over {expr_bot}'
     elif expr_top.is_Matrix or expr_bot.is_Matrix:
-        return sympy.MatMul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
+        return f"{expr_top} times {expr_bot} inverse"
     else:
        # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
        return f"{expr_top} over {expr_bot}"
@@ -897,9 +904,9 @@ def convert_func(func):
                 base = 10
             elif name == "ln":
                 base = sympy.E
-            expr = f"log of {arg} with base {base}"                         #sympy.log(arg, base, evaluate=False)
+            expr = f"log base {base} of {arg}"                         #sympy.log(arg, base, evaluate=False)
         elif name in ["exp", "exponentialE"]:
-            expr = f"euler's constant raised to the {arg}"                  #sympy.exp(arg)
+            expr = f"e raised to the {arg}"                  #sympy.exp(arg)
         elif name == "floor":
             expr = f"floor of {arg}"                                        #handle_floor(arg)
         elif name == "ceil":
@@ -957,12 +964,13 @@ def convert_func(func):
         return expr
     elif func.atom_expr_no_supexpr():
         # define a function
+        print(func.atom_expr_no_supexpr().getText())
         f = sympy.Function(func.atom_expr_no_supexpr().getText())
         # args
         args = func.func_common_args().getText().split(",")
         if args[-1] == '':
             args = args[:-1]
-        args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
+        # args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
         # supexpr
         if func.supexpr():
             if func.supexpr().expr():
@@ -971,6 +979,7 @@ def convert_func(func):
                 expr = convert_atom(func.supexpr().atom())
             return sympy.Pow(f(*args), expr, evaluate=False)
         else:
+            return f"{f} of {' '.join(args)}"
             return f(*args)
     elif func.FUNC_INT():
         return handle_integral(func)
@@ -1048,9 +1057,9 @@ def handle_sum_or_prod(func, name):
         end = convert_atom(func.supexpr().atom())
 
     if name == "summation":
-        return f"The sum of {iter_var} from {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
+        return f"The sum from {iter_var} equals {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
     elif name == "product":
-        return f"The iterated product of {iter_var} from {start} to {end} of {val}" #sympy.Product(val, (iter_var, start, end))
+        return f"The product from {iter_var} equals {start} to {end} of {val}" #sympy.Product(val, (iter_var, start, end))
 
 
 def handle_limit(func):
@@ -1083,9 +1092,9 @@ def handle_exp(func):
     else:
         exp_arg = 1
     if exp_arg == 1:
-        return f"euler's constaint"
+        return "e"
 
-    return f"euler's constant raised to the power{exp_arg}"
+    return f"e raised to the power{exp_arg}"
 
 
 def handle_gcd_lcm(f, args):
