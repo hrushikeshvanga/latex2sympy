@@ -1015,6 +1015,7 @@ def convert_func(func):
     elif func.FUNC_SUM():
         return handle_sum_or_prod(func, "summation")
     elif func.FUNC_PROD():
+        print("Is a product")
         return handle_sum_or_prod(func, "product")
     elif func.FUNC_LIM():
         return handle_limit(func)
@@ -1023,6 +1024,8 @@ def convert_func(func):
 
 
 def convert_func_arg(arg):
+    print(arg)
+
     if hasattr(arg, 'expr'):
         return convert_expr(arg.expr())
     else:
@@ -1082,7 +1085,7 @@ def handle_sum_or_prod(func, name):
         end = convert_atom(func.supexpr().atom())
 
     if name == "summation":
-        return f"The sum from {iter_var} equals {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
+        return f"The summation from {iter_var} equals {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
     elif name == "product":
         return f"The product from {iter_var} equals {start} to {end} of {val}" #sympy.Product(val, (iter_var, start, end))
 

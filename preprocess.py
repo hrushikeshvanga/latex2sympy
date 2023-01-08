@@ -15,7 +15,6 @@ event = Event()
 map = dict()
 hashes = []
 file = ""
-threads = []
 
 def preprocess():
     global file, threads, event
@@ -57,18 +56,17 @@ def preprocess():
 
 
         equation = file[nstart:nend]
-        equation = equation.replace(r"\\", "")
+        equation = equation.replace("\\\\", "")
         equation = equation.replace("\n", "")
         equation = list(equation)
-        equation = r"".join(equation)
-        print(equation)
+        equation = "".join(equation)
         hashed = get_hash(equation.encode('utf-8'))        
-        map[hashed] = r"{}".format(equation)
+        map[hashed] = equation
 
 
         file = file[:start] + hashed + file[end:]
 
-    # st = r"-a*-b"
+    # st = r"\frac{\partial^2f}{\partial x^2}"
     # print(latex2sympy2.latex2sympyStr(st))
     # return
 
@@ -121,12 +119,12 @@ def thread_writer():
 
 def convert_to_english(eq):
     try:
-        return latex2sympy2.latex2sympyStr(eq)
+        return latex2sympy2.latex2sympyStr("{}".format(eq))
     except Exception as e:
+        print(e)
         print("eq Exception=", eq)
         # st = latex2text.latex2text('$'+eq+'$')
         return "**Error**"
-        # raise Exception
     
         
 
