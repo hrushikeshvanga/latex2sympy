@@ -971,7 +971,9 @@ def convert_func(func):
                 expr = convert_atom(func.supexpr().atom())
             return sympy.Pow(f(*args), expr, evaluate=False)
         else:
-            return f(*args)
+            allArgs = [*args]
+            strArgs = " ".join([str(arg) for arg in allArgs])
+            return f"{f} evaluated at {strArgs} "  #(*args)
     elif func.FUNC_INT():
         return handle_integral(func)
     elif func.FUNC_SQRT():
@@ -1010,19 +1012,22 @@ def handle_integral(func):
     if func.DIFFERENTIAL():
         int_var = get_differential_var(func.DIFFERENTIAL())
     else:
-        for sym in integrand.atoms(sympy.Symbol):
-            s = str(sym)
-            if len(s) > 1 and s[0] == 'd':
-                if s[1] == '\\':
-                    int_var = sympy.Symbol(s[2:], real=is_real)
-                else:
-                    int_var = sympy.Symbol(s[1:], real=is_real)
-                int_sym = sym
+        if type(integrand) == str:
+            pass
+        else:
+            for sym in integrand.atoms(sympy.Symbol):
+                s = str(sym)
+                if len(s) > 1 and s[0] == 'd':
+                    if s[1] == '\\':
+                        int_var = sympy.Symbol(s[2:], real=is_real)
+                    else:
+                        int_var = sympy.Symbol(s[1:], real=is_real)
+                    int_sym = sym
         if int_var:
             integrand = integrand.subs(int_sym, 1)
         else:
             # Assume dx by default
-            int_var = sympy.Symbol('x', real=is_real)
+            int_var = 'x'               #sympy.Symbol('x', real=is_real)
 
     if func.subexpr():
         if func.subexpr().atom():
@@ -1033,9 +1038,9 @@ def handle_integral(func):
             upper = convert_atom(func.supexpr().atom())
         else:
             upper = convert_expr(func.supexpr().expr())
-        return sympy.Integral(integrand, (int_var, lower, upper))
+        return f"Integral of {integrand} from {lower} to {upper} w.r.t {int_var}"                         #sympy.Integral(integrand, (int_var, lower, upper))
     else:
-        return sympy.Integral(integrand, int_var)
+        return f"Integral of {integrand} w.r.t {int_var}"                                                # sympy.Integral(integrand, int_var)
 
 
 def handle_sum_or_prod(func, name):
