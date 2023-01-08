@@ -55,7 +55,8 @@ def main():
 
         equation = file[nstart:nend]
         equation = equation.replace("...", " something ")
-        equation = equation.replace("\\", "")
+        equation = equation.replace(r"\\", "")
+        equation = equation.replace("\n", "")
         hashed = get_hash(equation.encode('utf-8'))
         map[hashed] = r"{}".format(equation)
 

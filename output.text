@@ -35,14 +35,14 @@ a times X to the power 2 + b times X + c = opening bracket 4 times a closing bra
 
 Let's use the standard basis for **Error** and make a matrix for T:
 
-Equality(Function('T')(Integer(1)), Integer(1)) 
+T(1) = 1 = 1 times 1 + 0 times X + 0 times opening bracket X to the power 2 closing bracket 
 
 *Error**
 
 *Error**
 
 
-MatrixSymbol(Str('T'), Integer(4), Integer(4))
+MatrixSymbol(Str('T'), Integer(1), Integer(13))
 
  geometric multiplicity = 3, algebraic multiplicity  = 3
 
@@ -52,7 +52,7 @@ C. Diagonalizable since g times E times o = a times l times g
 
 D. **Error**
 
-MatrixSymbol(Str('T'), Integer(4), Integer(4))
+MatrixSymbol(Str('T'), Integer(1), Integer(13))
 
 
  §.§ 2.
@@ -65,14 +65,14 @@ a times X to the power 2 + b times X + c = a times X to the power 2 + opening br
 
 Let's use the standard basis for **Error** and make a matrix for T:
 
-Equality(Function('T')(Integer(1)), Integer(1)) 
+T(1) = 1 = 1 times 1 + 0 times X + 0 times opening bracket X to the power 2 closing bracket 
 
 *Error**
 
 *Error**
 
 
-MatrixSymbol(Str('T'), Integer(4), Integer(4))
+MatrixSymbol(Str('T'), Integer(1), Integer(13))
 
 Integer(1) geometric multiplicity = 1, algebraic multiplicity  = 3
 
@@ -85,7 +85,7 @@ D. Not diagonalizable so can't find.
 
  §.§ 3.
 
-A.Equality(MatrixSymbol(Str('T'), Integer(4), Integer(4)), ImmutableDenseMatrix([[Integer(1), Integer(1), Integer(0), Integer(0)], [Integer(0), Integer(2), Integer(0), Integer(0)], [Integer(0), Integer(0), Integer(0), Integer(1)], [Integer(0), Integer(0), Integer(-1), Integer(0)]]))
+A.T = Matrix([[1, 1, 0, 0, 2, 0, 0, 0, 0, 10, 0, -1, 0]])
 
 B. [Integer(2), Integer(1)] geometric multiplicity = 4 algebraic multiplicity = 2
 
@@ -97,7 +97,7 @@ D. Not diagonalizable so can't find.
 
  §.§ 4.
 
-A.MutableDenseMatrix([[Integer(1), Integer(-1), Integer(0), Integer(0)], [Integer(0), Integer(2), Integer(0), Integer(0)], [Integer(0), Integer(0), Integer(0), Integer(-1)], [Integer(0), Integer(0), Integer(1), Integer(0)]])
+A.MutableDenseMatrix([[Integer(1), Integer(-1), Integer(0), Integer(0), Integer(2), Integer(0), Integer(0), Integer(0), Integer(0), Integer(-10), Integer(0), Integer(1), Integer(0)]])
 
 B.['-1 times i', Symbol('i')]  geometric multiplicity = 2 algebraic multiplicity = 2
 
@@ -121,7 +121,7 @@ lambda_1 times v = lambda_2 times v.
 
 Rearranging, we get:
 
-*Error**. 
+lambda_2 times v minus lambda_1 times v = 0. 
 
 We know that the eigenvalues Symbol('lambda_1') and Symbol('lambda_2') are 2 numbers that are distinct, thus **Error**. So we must have Integer(0). Hence, the only vector contained in Symbol('T_
 lambda_1') and Symbol('T_
