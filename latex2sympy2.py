@@ -160,42 +160,27 @@ def convert_relation(rel):
     lh = convert_relation(rel.relation(0))
     rh = convert_relation(rel.relation(1))
     if rel.LT():
-        return f'{lh} is strictly less than {rh}'           #sympy.StrictLessThan(lh, rh, evaluate=False)
+        return f'{lh} is strictly less than {rh}'          
     elif rel.LTE():
-        return f'{lh} is less than {rh}'                        #sympy.LessThan(lh, rh, evaluate=False)
+        return f'{lh} is less than {rh}'                      
     elif rel.GT():
-        return f'{lh} is greater than {rh}'                             #sympy.StrictGreaterThan(lh, rh, evaluate=False)
+        return f'{lh} is greater than {rh}'                         
     elif rel.GTE():
-        return  f'{lh} is greater than equal to {rh}'                           #sympy.GreaterThan(lh, rh, evaluate=False)
+        return  f'{lh} is greater than equal to {rh}'                         
     elif rel.EQUAL():
-        return f'{lh} equals {rh}' #sympy.Eq(lh, rh, evaluate=False)                         #f"{lh} equals {rh}"#
+        return f'{lh} equals {rh}'                       
     elif rel.ASSIGNMENT():
         # !Use Global variances
         if type(lh) == str:
-            #PRINT
-            #print('lh: ', lh, type(lh))
-            # set value
             return f"{lh} = {rh}"#sympy.Eq(lh, rh, evaluate=False)
-            pass
+      
         elif lh.is_Symbol:
             # set value
             variances[lh] = rh
             var[str(lh)] = rh
             return rh
         else:
-            # find the symbols in lh - rh
-            print(type(lh), type(rh))
-            equation = lh - rh
-            # syms = equation.atoms(sympy.Symbol)
-            # if len(syms) > 0:
-            #     # Solve equation
-            #     result = []
-            #     for sym in syms:
-            #         values = sympy.solve(equation, sym)
-            #         for value in values:
-            #             result.append(sympy.Eq(sym, value, evaluate=False))
-            #     return result
-            # else:
+            #return equal expression
             return f"{lh} = {rh}" #sympy.Eq(lh, rh, evaluate=False)
     elif rel.IN():
         # !Use Global variances
