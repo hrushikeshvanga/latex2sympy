@@ -447,18 +447,18 @@ def convert_mp(mp):
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if type(lh) == str or type(rh) == str:
-            return f'{lh}/{rh}' #bad fix for strings
+            return f'{lh} over {rh}' #bad fix for strings
         elif lh.is_Matrix or rh.is_Matrix:
             return sympy.MatMul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
         else:
-            return sympy.Mul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
+            return f'{lh} over {rh}'                                         #   sympy.Mul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
     elif mp.CMD_MOD():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if rh.is_Matrix:
             raise Exception("Cannot perform modulo operation with a matrix as an operand")
         else:
-            return sympy.Mod(lh, rh, evaluate=False)
+            return f"{lh} mod {rh}"                
     else:
         if hasattr(mp, 'unary'):
             return convert_unary(mp.unary())
