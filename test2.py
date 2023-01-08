@@ -1,5 +1,6 @@
 
 from latex2sympy2 import latex2sympyStr
+import traceback
 
 
 def main():
@@ -54,13 +55,12 @@ def main():
         r"\begin{matrix}\sqrt{x}\\\sin(\theta)\end{matrix}",
 
         "---",
+
         r"\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}",
         r"\\left{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right}",
         r"\\left\\{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right\\}",
         r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
         r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
-
-
 
     ]
 
@@ -69,7 +69,13 @@ def main():
         if tex == '---':
             print("\n")
         else:
-            math = latex2sympyStr(tex)
-            print(tex, "-->", math)
+            try:
+                math = latex2sympyStr(tex)
+            except Exception as err:
+                # Print stack trace 
+                print(traceback.format_exc())
+                print(tex, f"--> Error: {err}")
+            else:
+                print(tex, "-->", math)
 
 main()
