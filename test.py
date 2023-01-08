@@ -2,6 +2,10 @@ from latex2sympy2 import latex2sympyStr
 
 
 def main():
+
+    test = "a - b"
+    print(test)
+    print(latex2sympyStr(test))
     testList = [
         r"0",
         r"1",
@@ -46,7 +50,8 @@ def main():
   "\\int \\frac{1}{a} + \\frac{1}{b} dx",
   "\\int (x+a)",
   "\\int a + b + c dx",
-  "\\log_{a^2} x"
+  "\\log_{a^2} x",
+  "a - b"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
