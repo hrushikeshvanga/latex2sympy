@@ -2,7 +2,6 @@ import re
 from threading import Thread, Lock, Event
 import latex2sympy2
 import hashlib
-from pylatexenc import latex2text
 
 # Output mutex
 output_lock = Lock()
