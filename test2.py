@@ -57,8 +57,7 @@ def main():
         r"\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}",
         r"\\left{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right}",
         r"\\left\\{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right\\}",
-
-
+        r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
         r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
 
 
