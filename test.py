@@ -40,7 +40,13 @@ def main():
  r"a * b + c * d + e * c * d",
   r"\sum_{n=1}^{\infty} 2^{-n} = 1",
   r'''\lim_{n\to3} \exp(-(n+1)^n)''',
-  r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)'''
+  r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)''',
+  r"T(X^2) = X^2 + 2X + 1 = 1(1) + 2(X) + 1(X^2)",
+  "\\int \\frac{1}{x} + 1 dx",
+  "\\int \\frac{1}{a} + \\frac{1}{b} dx",
+  "\\int (x+a)",
+  "\\int a + b + c dx",
+  "\\log_{a^2} x"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
