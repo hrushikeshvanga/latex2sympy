@@ -58,6 +58,8 @@ def main():
   "\\binom{16}{2}",
   "\\binom{16+2}{\\frac{4}{2}}",
   "\\binom{\\theta}{\\gamma}",
+  "128*10^300\\mod 876123",
+  "123123\\mod -541"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
