@@ -9,12 +9,16 @@ from google.cloud import texttospeech
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="theta-carving-374101-751fbd97e1f0.json"
 
-def generate_mp3(text):
+def generate_mp3():
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
 
     # Set the text input to be synthesized
-    synthesis_input = texttospeech.SynthesisInput(text = text)
+    file = open("textlatex.txt", "r")
+    words = file.read()
+    file.close()
+    print(words)
+    synthesis_input = texttospeech.SynthesisInput(text = words)
 
     # Build the voice request, select the language code ("en-US") and the ssml
     # voice gender ("neutral")

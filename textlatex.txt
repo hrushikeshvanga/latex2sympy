@@ -1,0 +1,85 @@
+Testing Math TTS
+math-tts HackEd 2023
+
+
+Basic Operations
+
+,
+
+opening bracket d minus b closing bracket
+
+,
+
+d dot opening bracket b + c closing bracket
+
+,
+
+d times b + c
+
+,
+
+a over b + c over d
+
+,
+
+d over opening bracket b + c closing bracket
+
+,
+
+-1 times d dot -1 times b
+
+,
+
+T of X squared = X squared + 2 X + 1 = 1 times 1 + 2 X + 1 times opening
+bracket X squared closing bracket
+
+,
+
+log base a squared of x
+
+,
+
+sin of (x) dot e raised to the powerx
+
+Derivatives
+
+,
+
+The derivative of x with respect to y
+
+,
+
+d squared times x over dx to the power 2
+
+,
+
+The partial derivative of f with respect to x
+
+Limits
+
+,
+
+Limit of f of x as x approaches infinity
+
+,
+
+Limit of f of x as x approaches negative infinity
+
+,
+
+Limit of opening bracket f of x + g of x closing bracket over x as x
+approaches infinity
+
+Integrals
+
+,
+
+Integral of f of x from a to b with respect to x
+
+Summation
+
+The summation from j equals 1 to k of A__j
+
+Product
+
+The product from j equals 1 to k of A__j
