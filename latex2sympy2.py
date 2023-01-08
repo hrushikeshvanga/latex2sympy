@@ -867,6 +867,7 @@ def convert_func(func):
                     "arccot"]:
             name = "a" + name[3:]
             expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            print(type(expr))
         elif name in ["arsinh", "arcosh", "artanh"]:
             name = "a" + name[2:]
             expr = getattr(sympy.functions, name)(arg, evaluate=False)
@@ -896,13 +897,13 @@ def convert_func(func):
                 base = 10
             elif name == "ln":
                 base = sympy.E
-            expr = f"log of {arg} with base {base}"#sympy.log(arg, base, evaluate=False)
+            expr = f"log of {arg} with base {base}"                         #sympy.log(arg, base, evaluate=False)
         elif name in ["exp", "exponentialE"]:
-            expr = f"euler's constant raised to the {arg}"   #sympy.exp(arg)
+            expr = f"euler's constant raised to the {arg}"                  #sympy.exp(arg)
         elif name == "floor":
-            expr = f"floor of {arg}"#handle_floor(arg)
+            expr = f"floor of {arg}"                                        #handle_floor(arg)
         elif name == "ceil":
-            expr = f"ceiling of {arg}"#handle_ceil(arg)
+            expr = f"ceiling of {arg}"                                      #handle_ceil(arg)
 
         func_pow = None
         should_pow = True
@@ -1081,7 +1082,10 @@ def handle_exp(func):
             exp_arg = convert_atom(func.supexpr().atom())
     else:
         exp_arg = 1
-    return sympy.exp(exp_arg)
+    if exp_arg == 1:
+        return f"euler's constaint"
+
+    return f"euler's constant raised to the power{exp_arg}"
 
 
 def handle_gcd_lcm(f, args):
