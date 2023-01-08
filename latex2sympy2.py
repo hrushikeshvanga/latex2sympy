@@ -96,6 +96,7 @@ def latex2sympy(sympy: str, variable_values={}):
 
     # if a list
     if math.relation_list():
+        print('a list')
         return_data = []
 
         # go over list items
@@ -107,6 +108,7 @@ def latex2sympy(sympy: str, variable_values={}):
     # if not, do default
     else:
         relation = math.relation()
+        print(relation)
         return_data = convert_relation(relation)
 
     return return_data
@@ -293,7 +295,7 @@ def convert_matrix(matrix):
     return mat
 
 
-def add_flat(lh, rh):
+def add_flat(lh, rh, isList = False):
     if hasattr(lh, 'is_Add') and lh.is_Add or hasattr(rh, 'is_Add') and rh.is_Add:
         args = []
         if hasattr(lh, 'is_Add') and lh.is_Add:
@@ -304,9 +306,14 @@ def add_flat(lh, rh):
             args = args + list(rh.args)
         else:
             args += [rh]
-        return sympy.Add(*args, evaluate=False)
+            argsString = " ".join(args)
+        return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
     else:
-        return sympy.Add(lh, rh, evaluate=False)
+        #No need for this
+        # if isList:
+        #     return f'{lh} and {rh}'
+        #else:
+        return f'{lh} + {rh}'  #sympy.Add(lh, rh, evaluate=False)
 
 
 def mat_add_flat(lh, rh):
@@ -338,7 +345,7 @@ def mul_flat(lh, rh):
             args += [rh]
         return sympy.Mul(*args, evaluate=False)
     else:
-        return sympy.Mul(lh, rh, evaluate=False)
+        return f'{lh}{rh}' #sympy.Mul(lh, rh, evaluate=False)
 
 
 def mat_mul_flat(lh, rh):
@@ -369,7 +376,10 @@ def convert_add(add):
         lh = convert_add(add.additive(0))
         rh = convert_add(add.additive(1))
 
-        if lh.is_Matrix or rh.is_Matrix:
+        #bad fix for strings
+        if type(lh) == str or type(rh) == str:
+            return add_flat(lh, rh)   #bad fix for strings
+        elif type(lh) != None and (lh.is_Matrix or rh.is_Matrix):
             return mat_add_flat(lh, rh)
         else:
             return add_flat(lh, rh)
@@ -460,7 +470,7 @@ def convert_postfix_list(arr, i=0):
         raise Exception("Index out of bounds")
 
     res = convert_postfix(arr[i])
-
+    print(type(res))
     if isinstance(res, sympy.Expr) or isinstance(res, sympy.Matrix) or res is sympy.S.EmptySet:
         if i == len(arr) - 1:
             return res  # nothing to multiply by
@@ -472,9 +482,12 @@ def convert_postfix_list(arr, i=0):
                 return mat_mul_flat(res, rh)
             else:
                 return mul_flat(res, rh)
+    elif type(res) == str:
+        pass
     else:  # must be derivative
         wrt = res[0]
         if i == len(arr) - 1:
+            #return f'derivative of {wrt}'
             raise Exception("Expected expression for derivative")
         else:
             expr = convert_postfix_list(arr, i + 1)
@@ -493,6 +506,7 @@ def do_subs(expr, at):
     elif at.equality():
         lh = convert_expr(at.equality().expr(0))
         rh = convert_expr(at.equality().expr(1))
+        print(type(lh))
         return expr.subs(lh, rh)
 
 
@@ -776,6 +790,7 @@ def convert_frac(frac):
     if expr_top.is_Matrix or expr_bot.is_Matrix:
         return sympy.MatMul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
     else:
+       # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
         return sympy.Mul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
 
 
@@ -1081,7 +1096,7 @@ def latex2latex(tex):
     if isinstance(result, list):
         return latex(result)
     else:
-        return latex(simplify(result.subs(variances).doit().doit()))
+        return result#latex(simplify(result.subs(variances).doit().doit()))
 
 
 # Set image value
@@ -1100,14 +1115,23 @@ if __name__ == '__main__':
     # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
     # latex2latex(r'b_1=\begin{bmatrix}1 \\ 2 \\ 3 \\ 4\end{bmatrix}')
     # tex = r"(x+2)|_{x=y+1}"
-    tex = r"f{(x)}"
+    tex = r"\frac{a}{b} + \frac{c}{d}"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
-    math = math.subs(variances)
+    #math = math.subs(variances)
     print("latex:", tex)
     # print("var:", variances)
     print("raw_math:", math)
-    print("math:", latex(math.doit()))
-    print("math_type:", type(math.doit()))
+
+
+    tex = r"a * b + c + d"
+    # print("latex2latex:", latex2latex(tex))
+    math = latex2sympy(tex)
+    #math = math.subs(variances)
+    print("latex:", tex)
+    # print("var:", variances)
+    print("raw_math:", math)
+    #print("math:", latex(math.doit()))
+    #print("math_type:", type(math.doit()))
     # print("shape:", (math.doit()).shape)
     print("cal:", latex2latex(tex))
