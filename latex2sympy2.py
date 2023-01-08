@@ -3,6 +3,7 @@ import re
 from sympy import matrix_symbols, simplify, factor, expand, apart, expand_trig
 from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
+from sympy import srepr
 
 try:
     from gen.PSParser import PSParser
@@ -345,7 +346,7 @@ def mul_flat(lh, rh):
             args += [rh]
         return sympy.Mul(*args, evaluate=False)
     else:
-        return f'{lh}{rh}' #sympy.Mul(lh, rh, evaluate=False)
+        return f'{lh} times {rh}' #sympy.Mul(lh, rh, evaluate=False)
 
 
 def mat_mul_flat(lh, rh):
@@ -412,15 +413,18 @@ def convert_mp(mp):
     if mp.MUL() or mp.CMD_TIMES() or mp.CMD_CDOT():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
-
-        if lh.is_Matrix or rh.is_Matrix:
+        if type(lh) == str or type(rh) == str:
+            return f'{lh} times {rh}' #bad fix for strings
+        elif lh.is_Matrix or rh.is_Matrix:
             return mat_mul_flat(lh, rh)
         else:
             return mul_flat(lh, rh)
     elif mp.DIV() or mp.CMD_DIV() or mp.COLON():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
-        if lh.is_Matrix or rh.is_Matrix:
+        if type(lh) == str or type(rh) == str:
+            return f'{lh}/{rh}' #bad fix for strings
+        elif lh.is_Matrix or rh.is_Matrix:
             return sympy.MatMul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
         else:
             return sympy.Mul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
@@ -470,7 +474,7 @@ def convert_postfix_list(arr, i=0):
         raise Exception("Index out of bounds")
 
     res = convert_postfix(arr[i])
-    print(type(res))
+    print('res: ', type(res), res)
     if isinstance(res, sympy.Expr) or isinstance(res, sympy.Matrix) or res is sympy.S.EmptySet:
         if i == len(arr) - 1:
             return res  # nothing to multiply by
@@ -483,7 +487,15 @@ def convert_postfix_list(arr, i=0):
             else:
                 return mul_flat(res, rh)
     elif type(res) == str:
-        pass
+        #TBD
+        if i == len(arr) - 1:
+            return res
+        else:
+            rh = convert_postfix_list(arr, i + 1)
+            if res.is_Matrix or rh.is_Matrix:
+                return mat_mul_flat(res, rh)
+            else:
+                return mul_flat(res, rh)
     else:  # must be derivative
         wrt = res[0]
         if i == len(arr) - 1:
@@ -563,7 +575,7 @@ def convert_exp(exp):
             exponent = convert_atom(exp.atom())
         elif exp.expr():
             exponent = convert_expr(exp.expr())
-        return sympy.Pow(base, exponent, evaluate=False)
+        return f'{base} to the power {exponent}' #sympy.Pow(base, exponent, evaluate=False)
     else:
         if hasattr(exp, 'comp'):
             return convert_comp(exp.comp())
@@ -573,6 +585,9 @@ def convert_exp(exp):
 
 def convert_comp(comp):
     if comp.group():
+        res = convert_expr(comp.group().expr())
+        if type(res) == str:
+            return 'left bracket ' + res + ' right bracket'
         return convert_expr(comp.group().expr())
     elif comp.abs_group():
         return sympy.Abs(convert_expr(comp.abs_group().expr()), evaluate=False)
@@ -665,7 +680,7 @@ def convert_atom(atom):
                 func_pow = convert_expr(supexpr.expr())
             else:
                 func_pow = convert_atom(supexpr.atom())
-            return sympy.Pow(atom_symbol, func_pow, evaluate=False)
+            return f"{atom_symbol} to the power {func_pow}"#sympy.Pow(atom_symbol, func_pow, evaluate=False)
 
         return atom_symbol if not matrix_symbol else matrix_symbol
     elif atom.SYMBOL():
@@ -748,6 +763,7 @@ def rule2text(ctx):
 
 
 def convert_frac(frac):
+    #import pdb; pdb.set_trace();
     diff_op = False
     partial_op = False
     lower_itv = frac.lower.getSourceInterval()
@@ -787,11 +803,14 @@ def convert_frac(frac):
 
     expr_top = convert_expr(frac.upper)
     expr_bot = convert_expr(frac.lower)
-    if expr_top.is_Matrix or expr_bot.is_Matrix:
+    if type(expr_top) == str or type(expr_bot) == str:
+        return f'{expr_top} over {expr_bot}'
+    elif expr_top.is_Matrix or expr_bot.is_Matrix:
         return sympy.MatMul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
     else:
        # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
-        return sympy.Mul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
+       return f"{expr_top} over {expr_bot}"
+        #return sympy.Mul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
 
 
 def convert_binom(binom):
@@ -1016,7 +1035,8 @@ def handle_limit(func):
     approaching = convert_expr(sub.expr())
     content = convert_mp(func.mp())
 
-    return sympy.Limit(content, var, approaching, direction)
+    #return sympy.Limit(content, var, approaching, direction)
+    return f"Limit of {content} as {var} approaches {approaching}"
 
 
 def handle_exp(func):
@@ -1111,6 +1131,13 @@ for i in range(1, 10):
     variances[lh_m] = rh
     var[str(lh)] = rh
 
+def latex2sympyStr(tex):
+    result = latex2sympy(tex)
+    if type(result) == str:
+        return result
+    else:
+        return srepr(result)
+
 if __name__ == '__main__':
     # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
     # latex2latex(r'b_1=\begin{bmatrix}1 \\ 2 \\ 3 \\ 4\end{bmatrix}')
@@ -1123,15 +1150,65 @@ if __name__ == '__main__':
     # print("var:", variances)
     print("raw_math:", math)
 
-
-    tex = r"a * b + c + d"
+    tex = r"\frac{a}{b + \frac{c}{d}}"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
     #math = math.subs(variances)
     print("latex:", tex)
     # print("var:", variances)
     print("raw_math:", math)
+
+
+    tex = r"a + b + c + d + e + c + d"
+    # print("latex2latex:", latex2latex(tex))
+    math = latex2sympy(tex)
+    #math = math.subs(variances)
+    print("latex:", tex)
+    # print("var:", variances)
+    print("raw_math:", math)
+
+
+    tex = r"a * b + c * d + e * c * d"
+    # print("latex2latex:", latex2latex(tex))
+    math = latex2sympy(tex)
+    #math = math.subs(variances)
+    print("latex:", tex)
+    # print("var:", variances)
+    print("raw_math:", math)
+
+
+    tex = r"a * b + c * d + e * c * d"
+    # print("latex2latex:", latex2latex(tex))
+    math = latex2sympy(tex)
+    #math = math.subs(variances)
+    print("latex:", tex)
+    # print("var:", variances)
+    print("raw_math:", math)
+
+    matrix = r'''
+    \begin{pmatrix}
+        1 & 2 & 3 \\ 
+        4 & 5 & 6 \\
+        7 & 8 & 9 \\ 
+    \end{pmatrix}
+'''
+    math = latex2sympy(matrix)
+    #math = math.subs(variances)
+    brac = r'''(n*(n + 1) + n + 2)'''
+    # print("var:", variances)
+    print("raw_math:", math)
+
+    math = latex2sympy(brac)
+    
+    print(math)
+
+    complicatedLatex = r'''\lim_{n\to3} \frac{(n+1)^n}{n^n}'''
+  #  
+    math = latex2sympy(complicatedLatex)
+    
+    print(math)
+
     #print("math:", latex(math.doit()))
     #print("math_type:", type(math.doit()))
     # print("shape:", (math.doit()).shape)
-    print("cal:", latex2latex(tex))
+    #print("cal:", latex2latex(tex))
