@@ -29,74 +29,23 @@ def main():
         r"\int^b_a x dx",
         r"\ln x",
         r"aX^2 + bX + c",
-        r'(4a)X^2 + (4a + 2b)X + (a + b + c)'
+        r'(4a)X^2 + (4a + 2b)X + (a + b + c)',
+      r'''
+    \begin{pmatrix}
+        1 & 2 & 3 \\ 
+        4 & 5 & 6 \\
+        7 & 8 & 9 \\ 
+    \end{pmatrix}
+''',
+ r"a * b + c * d + e * c * d",
+  r"\sum_{n=1}^{\infty} 2^{-n} = 1",
+  r'''\lim_{n\to3} \exp(-(n+1)^n)''',
+  r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)'''
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
         print(tex, "-->", math)
 
 
-        math = latex2sympyStr(tex)
-    #math = math.subs(variances)
-    print("latex:", tex)
-    # print("var:", variances)
-    print("raw_math:", math)
-
-
-    tex = r"a * b + c * d + e * c * d"
-    # print("latex2latex:", latex2latex(tex))
-    math = latex2sympyStr(tex)
-    #math = math.subs(variances)
-    print("latex:", tex)
-    # print("var:", variances)
-    print("raw_math:", math)
-
-    matrix = r'''
-    \begin{pmatrix}
-        1 & 2 & 3 \\ 
-        4 & 5 & 6 \\
-        7 & 8 & 9 \\ 
-    \end{pmatrix}
-'''
-#     math = latex2sympyStr(matrix)
-#     #math = math.subs(variances)
-#     brac = r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)'''
-#     # print("var:", variances)
-#     print("raw_math:", math)
-
-#     math = latex2sympyStr(brac)
-    
-#     print(math)
-
-#     complicatedLatex = r'''\lim_{n\to3} \exp(-(n+1)^n)'''
-
-#     unarytex = r'''+c'''
-#   #  
-#     math = latex2sympyStr(complicatedLatex)
-    
-#     print(math)
-
-
-#     unarytex = r'''+d*3'''
-#   #  
-#     math = latex2sympyStr(unarytex)
-    
-#     print(math)
-
-#     summation= r"\sum_{n=1}^{\infty} 2^{-n} = 1"
-
-#     math = latex2sympyStr(summation)
-    
-#     equals = r"n=1"
-
-#     math = latex2sympyStr(equals)
-#     print(math)
-
-#     text = r"\mathbb{R}^N"
-
-
-    
-#     print(math)
-#     math = latex2sympyStr(text)
 
 main()
