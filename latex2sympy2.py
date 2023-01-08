@@ -623,7 +623,7 @@ def convert_comp(comp):
             return 'opening bracket ' + res + ' closing bracket'
         return convert_expr(comp.group().expr())
     elif comp.abs_group():
-        return sympy.Abs(convert_expr(comp.abs_group().expr()), evaluate=False)
+        return f"Absolute value of ({convert_expr(comp.abs_group().expr())})"  
     elif comp.floor_group():
         return handle_floor(convert_expr(comp.floor_group().expr()))
     elif comp.ceil_group():
@@ -696,14 +696,17 @@ def convert_atom(atom):
         # for matrix symbol
         matrix_symbol = None
         global var
-        if atom_text + subscript_text in var:
-            try:
-                rh = var[atom_text + subscript_text]
-                shape = sympy.shape(rh)
-                matrix_symbol = sympy.MatrixSymbol(atom_text + subscript_text, shape[0], shape[1])
-                variances[matrix_symbol] = variances[atom_symbol]
-            except:
-                pass
+        try:
+            if atom_text + subscript_text in var:
+                try:
+                    rh = var[atom_text + subscript_text]
+                    shape = sympy.shape(rh)
+                    matrix_symbol = sympy.MatrixSymbol(atom_text + subscript_text, shape[0], shape[1])
+                    variances[matrix_symbol] = variances[atom_symbol]
+                except:
+                    pass
+        except:
+            pass
 
         # find the atom's superscript, and return as a Pow if found
         if atom_expr.supexpr():
