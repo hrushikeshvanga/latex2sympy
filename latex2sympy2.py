@@ -201,7 +201,7 @@ def convert_relation(rel):
             raise Exception("Don't support this form of definition of matrix symbol.")
         return lh
     elif rel.UNEQUAL():
-        return sympy.Ne(lh, rh, evaluate=False)
+        return f'{lh} not equals {rh}'                      #sympy.Ne(lh, rh, evaluate=False)
 
 
 def convert_expr(expr):
@@ -332,7 +332,7 @@ def sub_flat(lh, rh, isList = False):
             argsString = " ".join(args)
         return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
     else:
-        return f'{lh} minus {rh}'  #sympy.Add(lh, rh, evaluate=False)
+        return f'{lh} minus {rh}' 
 
 def mat_add_flat(lh, rh):
     if hasattr(lh, 'is_MatAdd') and lh.is_MatAdd or hasattr(rh, 'is_MatAdd') and rh.is_MatAdd:
@@ -361,7 +361,7 @@ def mul_flat(lh, rh):
             args = args + list(rh.args)
         else:
             args += [rh]
-        return sympy.Mul(*args, evaluate=False)
+        return f'Multiplication of open bracket {"".join(args)} close bracket '                     #sympy.Mul(*args, evaluate=False)
     else:
         if (type(lh) == Integer or type(lh) == Float) and type(rh) == Symbol:
             return f'{lh} {rh}'
@@ -447,11 +447,11 @@ def convert_mp(mp):
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if type(lh) == str or type(rh) == str:
-            return f'{lh} over {rh}' #bad fix for strings
+            return f'{lh} over {rh}'
         elif lh.is_Matrix or rh.is_Matrix:
             return sympy.MatMul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
         else:
-            return f'{lh} over {rh}'                                         #   sympy.Mul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
+            return f'{lh} over {rh}'                                       
     elif mp.CMD_MOD():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
@@ -550,8 +550,7 @@ def do_subs(expr, at):
     elif at.equality():
         lh = convert_expr(at.equality().expr(0))
         rh = convert_expr(at.equality().expr(1))
-        #PRINT
-        #print(type(lh))
+      
         return expr.subs(lh, rh)
 
 
@@ -980,16 +979,14 @@ def convert_func(func):
             expr = f'{expr} raised to the power {func_pow}'                
         return expr
     elif func.atom_expr_no_supexpr():
-        # define a function
-        print(func.atom_expr_no_supexpr().getText())
         f = sympy.Function(func.atom_expr_no_supexpr().getText())
         # args
         args = func.func_common_args().getText().split(",")
         if args[-1] == '':
             args = args[:-1]
-        # args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
+        args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
         # supexpr
-        if func.supexpr():
+        if func.supexpr(): #potentially need to be changed
             if func.supexpr().expr():
                 expr = convert_expr(func.supexpr().expr())
             else:
@@ -997,7 +994,18 @@ def convert_func(func):
             #return sympy.Pow(f(*args), expr, evaluate=False)
             return f"({f} evaluated at {args}) raised to the {expr}" 
         else:
-            return f"{f} of {' '.join(args)}"
+            argsString = [str(arg) for arg in args]
+            String = ','.join(argsString)
+            print(String)
+            andPos = -1
+            for i in range(len(String)-1, -1, -1):
+                if String[i] == ',':
+                    andPos = i
+                    break  
+
+            if andPos != -1:
+                String = String[:andPos] + ' and ' + String[andPos+1:]
+            return f"{f} of {String}"
         
     elif func.FUNC_INT():
         return handle_integral(func)
@@ -1217,16 +1225,11 @@ def latex2sympyStr(tex):
             return "Cannot get String representation of result"
 
 if __name__ == '__main__':
-    # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
-    # latex2latex(r'b_1=\begin{bmatrix}1 \\ 2 \\ 3 \\ 4\end{bmatrix}')
-    # tex = r"(x+2)|_{x=y+1}"
+  
 
     test5 =  "a \\div b"
     test6 = "100!"
-    math = latex2sympy(test5)
-    print(math)
-    math = latex2sympy(test6)
-    print(math)
+  
 
     tex = r"\frac{a}{b} + \frac{c}{d}"
     # print("latex2latex:", latex2latex(tex))

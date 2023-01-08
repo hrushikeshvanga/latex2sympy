@@ -3,7 +3,7 @@ from latex2sympy2 import latex2sympyStr
 
 def main():
 
-    test = "a - b"
+    test = "f(x^2+4)"
     print(test)
     print(latex2sympyStr(test))
     testList = [
@@ -59,7 +59,9 @@ def main():
   "\\binom{16+2}{\\frac{4}{2}}",
   "\\binom{\\theta}{\\gamma}",
   "128*10^300\\mod 876123",
-  "123123\\mod -541"
+  "123123\\mod -541",
+  "\\sin(x)*e^x",
+  "f(x, y, z)"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
