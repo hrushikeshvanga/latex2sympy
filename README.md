@@ -30,7 +30,7 @@ pip install latex2sympy2
 
 **Requirements:** `sympy` and `antlr4-python3-runtime version 7.2` packages.
 
-##Pre-req
+## Pre-req
 ```
 pip install antlr4-python3-runtime==4.7.2
 ```
