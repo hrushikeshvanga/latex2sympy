@@ -33,6 +33,7 @@ pip install latex2sympy2
 ## Pre-req
 ```
 pip install antlr4-python3-runtime==4.7.2
+pip install pylatexenc
 ```
 
 ## Usage
