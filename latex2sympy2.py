@@ -184,18 +184,19 @@ def convert_relation(rel):
             return rh
         else:
             # find the symbols in lh - rh
+            print(type(lh), type(rh))
             equation = lh - rh
-            syms = equation.atoms(sympy.Symbol)
-            if len(syms) > 0:
-                # Solve equation
-                result = []
-                for sym in syms:
-                    values = sympy.solve(equation, sym)
-                    for value in values:
-                        result.append(sympy.Eq(sym, value, evaluate=False))
-                return result
-            else:
-                return sympy.Eq(lh, rh, evaluate=False)
+            # syms = equation.atoms(sympy.Symbol)
+            # if len(syms) > 0:
+            #     # Solve equation
+            #     result = []
+            #     for sym in syms:
+            #         values = sympy.solve(equation, sym)
+            #         for value in values:
+            #             result.append(sympy.Eq(sym, value, evaluate=False))
+            #     return result
+            # else:
+            return f"{lh} = {rh}" #sympy.Eq(lh, rh, evaluate=False)
     elif rel.IN():
         # !Use Global variances
         if hasattr(rh, 'is_Pow') and rh.is_Pow and hasattr(rh.exp, 'is_Mul'):
@@ -329,6 +330,21 @@ def add_flat(lh, rh, isList = False):
     else:
         return f'{lh} + {rh}'  #sympy.Add(lh, rh, evaluate=False)
 
+def sub_flat(lh, rh, isList = False):
+    if hasattr(lh, 'is_Add') and lh.is_Add or hasattr(rh, 'is_Add') and rh.is_Add:
+        args = []
+        if hasattr(lh, 'is_Add') and lh.is_Add:
+            args += list(lh.args)
+        else:
+            args += [lh]
+        if hasattr(rh, 'is_Add') and rh.is_Add:
+            args = args + list(rh.args)
+        else:
+            args += [rh]
+            argsString = " ".join(args)
+        return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
+    else:
+        return f'{lh} minus {rh}'  #sympy.Add(lh, rh, evaluate=False)
 
 def mat_add_flat(lh, rh):
     if hasattr(lh, 'is_MatAdd') and lh.is_MatAdd or hasattr(rh, 'is_MatAdd') and rh.is_MatAdd:
@@ -401,6 +417,8 @@ def convert_add(add):
         lh = convert_add(add.additive(0))
         rh = convert_add(add.additive(1))
 
+        if type(lh) == str or type(rh) == str:
+            return sub_flat(lh, rh)   #bad fix for strings
         if lh.is_Matrix or rh.is_Matrix:
             return mat_add_flat(lh, mat_mul_flat(-1, rh))
         else:
@@ -408,11 +426,13 @@ def convert_add(add):
             # return Sub(lh, rh, evaluate=False)
             if not rh.is_Matrix and rh.func.is_Number:
                 rh = -rh
+                return sub_flat(lh, rh)
             else:
                 rh = mul_flat(-1, rh)
-            return add_flat(lh, rh)
+                return add_flat(lh, rh)
     else:
         return convert_mp(add.mp())
+
 
 
 def convert_mp(mp):
