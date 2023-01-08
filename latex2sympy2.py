@@ -499,8 +499,9 @@ def convert_postfix_list(arr, i=0):
         else:
             # multiply by next
             rh = convert_postfix_list(arr, i + 1)
-
-            if res.is_Matrix or rh.is_Matrix:
+            if type(res) == str or type(rh) == str:
+                return mul_flat(res, rh)
+            elif res.is_Matrix or rh.is_Matrix:
                 return mat_mul_flat(res, rh)
             else:
                 return mul_flat(res, rh)
@@ -1194,100 +1195,7 @@ if __name__ == '__main__':
 
     tex = r"a * b + c * d + e * c * d"
     # print("latex2latex:", latex2latex(tex))
-    math = latex2sympy(tex)
-    #math = math.subs(variances)
-    print("latex:", tex)
-    # print("var:", variances)
-    print("raw_math:", math)
 
-
-    tex = r"a * b + c * d + e * c * d"
-    # print("latex2latex:", latex2latex(tex))
-    math = latex2sympy(tex)
-    #math = math.subs(variances)
-    print("latex:", tex)
-    # print("var:", variances)
-    print("raw_math:", math)
-
-    matrix = r'''
-    \begin{pmatrix}
-        1 & 2 & 3 \\ 
-        4 & 5 & 6 \\
-        7 & 8 & 9 \\ 
-    \end{pmatrix}
-'''
-    math = latex2sympy(matrix)
-    #math = math.subs(variances)
-    brac = r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)'''
-    # print("var:", variances)
-    print("raw_math:", math)
-
-    math = latex2sympy(brac)
+  
     
-    print(math)
-
-    complicatedLatex = r'''\lim_{n\to3} \exp(-(n+1)^n)'''
-
-    unarytex = r'''+c'''
-  #  
-    math = latex2sympy(complicatedLatex)
     
-    print(math)
-
-
-    unarytex = r'''+d*3'''
-  #  
-    math = latex2sympy(unarytex)
-    
-    print(math)
-
-    summation= r"\sum_{n=1}^{\infty} 2^{-n} = 1"
-
-    math = latex2sympy(summation)
-    
-    equals = r"n=1"
-
-    math = latex2sympy(equals)
-    print(math)
-
-    text = r"\mathbb{R}^N"
-
-
-    
-    print(math)
-    math = latex2sympy(text)
-    testList = [
-        r"0",
-        r"1",
-        r"5-3",
-        r"x^2",
-        r"2x",
-        r"a \cdot b",
-        r"a \div b",
-        r"a^2 + b^2 = c^2",
-        r"\artanh(a)",
-        r"\operatorname{ceil}(b)",
-        r"\operatorname{arcsinh}(a)",
-        r"\operatorname{arccosh}(a)",
-        r"\operatorname{arctanh}(a)",
-        r"\operatorname{arsinh}(a)",
-        r"\operatorname{arcosh}(a)",
-        r"\operatorname{artanh}(a)",
-        r"\operatorname{gcd}(a, b)",
-        r"\operatorname{lcm}(a, b)",
-        r"\operatorname{gcd}(a,b)",
-        r"\operatorname{lcm}(a,b)",
-        r"\operatorname{floor}(a)",
-        r"\frac{d}{dx} x",
-        r"||x||",
-        r"\int^b_a x dx",
-        r"\\ln x"
-    ]
-    for tex in testList:
-        math = latex2sympyStr(tex)
-        print(tex, math)
-    
-    #print("math:", latex(math.doit()))
-    #print("math_type:", type(math.doit()))
-    # print("shape:", (math.doit()).shape)
-    #print("cal:", latex2latex(tex))
