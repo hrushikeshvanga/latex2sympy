@@ -861,13 +861,12 @@ def convert_frac(frac):
     else:
        # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
        return f"{expr_top} over {expr_bot}"
-        #return sympy.Mul(expr_top, sympy.Pow(expr_bot, -1, evaluate=False), evaluate=False)
 
 
 def convert_binom(binom):
     expr_top = convert_expr(binom.upper)
     expr_bot = convert_expr(binom.lower)
-    return sympy.binomial(expr_top, expr_bot)
+    return f'binomial expression where numerator is {expr_top} and denominator is {expr_bot}' #sympy.binomial(expr_top, expr_bot)
 
 
 def convert_func(func):
@@ -882,8 +881,7 @@ def convert_func(func):
         # change arc<trig> -> a<trig>
         if name in ["arcsin", "arccos", "arctan", "arccsc", "arcsec",
                     "arccot"]:
-            #name = "a" + name[3:]
-           # expr = getattr(sympy.functions, name)(arg, evaluate=False)
+        
             if name == "arccsc":
                 expr =  f'{name[:3]}-{"cosec"} of ({arg})'
             else:
@@ -892,22 +890,21 @@ def convert_func(func):
         elif name in ["arsinh", "arcosh", "artanh"]:
             name = "arc-" + name[2:]
             expr = f'{name} of ({arg})'
-            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
+           
         elif name in ["arcsinh", "arccosh", "arctanh"]:
             expr = f'{name[:3]}-{name[3:]} of ({arg})'
-           # name = "a" + name[3:]
-            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            #saving the name when converting latex to text
         elif name == "operatorname":
             operatorname = func.func_normal_single_arg().func_operator_name.getText()
 
             if operatorname in ["arsinh", "arcosh", "artanh"]:
                 operatorname = "arc-" + operatorname[2:]
                 expr = f'{operatorname} of ({arg})'
-                #expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
+            
             elif operatorname in ["arcsinh", "arccosh", "arctanh"]:
                 operatorname = "arc-" + operatorname[3:]
                 expr = f'{operatorname} of ({arg})'
-                #expr = getattr(sympy.functions, operatorname)(arg, evaluate=False)
+              
             elif operatorname == "floor":
                 expr = handle_floor(arg)
             elif operatorname == "ceil":
@@ -922,13 +919,13 @@ def convert_func(func):
                 base = 10
             elif name == "ln":
                 base = sympy.E
-            expr = f"log base {base} of {arg}"                         #sympy.log(arg, base, evaluate=False)
+            expr = f"log base {base} of {arg}"                        
         elif name in ["exp", "exponentialE"]:
-            expr = f"e raised to the {arg}"                  #sympy.exp(arg)
+            expr = f"e raised to the {arg}"                 
         elif name == "floor":
-            expr = f"floor of {arg}"                                        #handle_floor(arg)
+            expr = f"floor of {arg}"                                        
         elif name == "ceil":
-            expr = f"ceiling of {arg}"                                      #handle_ceil(arg)
+            expr = f"ceiling of {arg}"                                   
 
         func_pow = None
         should_pow = True
@@ -969,7 +966,7 @@ def convert_func(func):
             expr = handle_gcd_lcm(name, args)
         elif name in ["max", "min"]:
             name = name[0].upper() + name[1:]
-            expr =  f"{name} of {''.join(args)}"            #getattr(sympy.functions, name)(*args, evaluate=False)
+            expr =  f"{name} of {''.join(args)}"            
 
         func_pow = None
         should_pow = True
@@ -980,7 +977,7 @@ def convert_func(func):
                 func_pow = convert_atom(func.supexpr().atom())
 
         if func_pow and should_pow:
-            expr = f'{expr} raised to the power {func_pow}'                     #sympy.Pow(expr, func_pow, evaluate=False)
+            expr = f'{expr} raised to the power {func_pow}'                
         return expr
     elif func.atom_expr_no_supexpr():
         # define a function
@@ -1008,7 +1005,7 @@ def convert_func(func):
         expr = convert_expr(func.base)
         if func.root:
             r = convert_expr(func.root)
-            return f"{expr} raised to the power {1/r}"                             #sympy.Pow(expr, 1 / r, evaluate=False)
+            return f"{expr} raised to the power {1/r}"                            
         else:
             return f"{expr} raised to the power {1/2}" 
             #return sympy.Pow(expr, sympy.S.Half, evaluate=False)
@@ -1056,7 +1053,7 @@ def handle_integral(func):
             integrand = integrand.subs(int_sym, 1)
         else:
             # Assume dx by default
-            int_var = 'x'               #sympy.Symbol('x', real=is_real)
+            int_var = 'x'              
 
     if func.subexpr():
         if func.subexpr().atom():
@@ -1067,9 +1064,9 @@ def handle_integral(func):
             upper = convert_atom(func.supexpr().atom())
         else:
             upper = convert_expr(func.supexpr().expr())
-        return f"Integral of {integrand} from {lower} to {upper} with respect to {int_var}"                         #sympy.Integral(integrand, (int_var, lower, upper))
+        return f"Integral of {integrand} from {lower} to {upper} with respect to {int_var}"                         
     else:
-        return f"Integral of {integrand} with respect to {int_var}"                                                # sympy.Integral(integrand, int_var)
+        return f"Integral of {integrand} with respect to {int_var}"                                              
 
 
 def handle_sum_or_prod(func, name):
@@ -1082,9 +1079,9 @@ def handle_sum_or_prod(func, name):
         end = convert_atom(func.supexpr().atom())
 
     if name == "summation":
-        return f"The sum from {iter_var} equals {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
+        return f"The sum from {iter_var} equals {start} to {end} of {val}"
     elif name == "product":
-        return f"The product from {iter_var} equals {start} to {end} of {val}" #sympy.Product(val, (iter_var, start, end))
+        return f"The product from {iter_var} equals {start} to {end} of {val}" 
 
 
 def handle_limit(func):
@@ -1136,7 +1133,7 @@ def handle_gcd_lcm(f, args):
     if f == "gcd":
         return "GCD of " + str(args)
     else:
-        return "LCM of " +str(args)                                     #sympy.UnevaluatedExpr(getattr(sympy, f)(args))
+        return "LCM of " +str(args)                                  
 
 
 def handle_floor(expr):
@@ -1145,7 +1142,7 @@ def handle_floor(expr):
 
     expr: Expr - sympy expression as an argument to floor()
     """
-    return  f"floor of {expr}"                    #sympy.functions.floor(expr, evaluate=False)
+    return  f"floor of {expr}"              
 
 
 def handle_ceil(expr):
@@ -1154,7 +1151,7 @@ def handle_ceil(expr):
 
     expr: Expr - sympy expression as an argument to ceil()
     """
-    return f"ceiling of {expr}"                                                #sympy.functions.ceiling(expr, evaluate=False)
+    return f"ceiling of {expr}"                                               
 
 
 def get_differential_var(d):
@@ -1211,7 +1208,10 @@ def latex2sympyStr(tex):
     if type(result) == str:
         return result
     else:
-        return srepr(result)
+        try:
+            return srepr(result)
+        except Exception:
+            return "Cannot get String representation of result"
 
 if __name__ == '__main__':
     # latex2latex(r'A_1=\begin{bmatrix}1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8\end{bmatrix}')
