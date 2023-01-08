@@ -1,0 +1,15 @@
+[1.0]
+
+[2.0]
+
+[2.1]{From Chapter 10, 11, and 12}
+
+[2.2]{Linear Classifier} 
+[2.3][2.4][2.5][2.6][2.7]
+
+
+[2.8]{Lasso and Ridge Regression} 
+
+[2.9][2.10][2.11][2.12][2.13][2.14][2.15][2.16][2.17][2.18][2.19][2.20]y[2.21][2.22][2.23][2.24]^N$. Does third derivative has any tangible meaning except rate of change of second derivative? First derivative allows us to find stationary points and second derivative allows us to classify those stationary points. And if it does, what's the use and does that usage works for every function? }[2.25][2.26][2.27][2.28]
+
+[1.1]
