@@ -2,9 +2,7 @@ import re
 from threading import Thread, Lock, Event
 import latex2sympy2
 import hashlib
-from antlr4.error.Errors import NoViableAltException
-from pylatexenc.latex2text import LatexNodes2Text
-
+from pylatexenc import latex2text
 
 # Output mutex
 output_lock = Lock()
@@ -19,13 +17,14 @@ hashes = []
 file = ""
 threads = []
 
-def main():
+def preprocess():
     global file, threads, event
-    # filename = input()
-    ffile = open("exam.tex", "r")
+    filename = input()
+    ffile = open(filename, "r")
     file = ffile.read()
 
     ffile.close()
+    double_pattern = re.compile(r"\$\$(.*?)\$\$", re.DOTALL)
     inline_pattern = re.compile(r"\$(.*?)\$", re.DOTALL)
     inline_pattern2 = re.compile(r"\\\((.*?)\\\)", re.DOTALL)
 
@@ -34,7 +33,8 @@ def main():
 
     
     # Finding and replacing equations with hash
-    while (w:= re.search(inline_pattern, file)) \
+    while (w:=re.search(double_pattern, file)) \
+        or (w:= re.search(inline_pattern, file)) \
         or (w:=re.search(inline_pattern2, file)) \
         or (w:=re.search(displayed_pattern, file)) \
         or (w:=re.search(displayed_pattern2, file)):
@@ -45,6 +45,9 @@ def main():
         if (file[start] == "$"):
             nstart = start + 1
             nend = end - 1
+            if (file[start+1] == "$"):
+                nstart += 1
+                nend -= 1
         if (file[start] == "\\" and file[start+1] == "["):
             nstart = start + 2
             nend = end - 2
@@ -54,23 +57,28 @@ def main():
 
 
         equation = file[nstart:nend]
-        equation = equation.replace("...", " something ")
         equation = equation.replace(r"\\", "")
         equation = equation.replace("\n", "")
-        hashed = get_hash(equation.encode('utf-8'))
+        equation = list(equation)
+        equation = r"".join(equation)
+        print(equation)
+        hashed = get_hash(equation.encode('utf-8'))        
         map[hashed] = r"{}".format(equation)
 
 
         file = file[:start] + hashed + file[end:]
+
+    # st = r"-a*-b"
+    # print(latex2sympy2.latex2sympyStr(st))
+    # return
 
     # Spawn workers
     spawn_workers()
 
     # write to output
     event.wait()
-    final = get_final_text()
-    output_file = open("output.text", "w")
-    output_file.write(final)
+    output_file = open("output.tex", "w")
+    output_file.write(file)
     output_file.close()
     
 
@@ -116,6 +124,7 @@ def convert_to_english(eq):
         return latex2sympy2.latex2sympyStr(eq)
     except Exception as e:
         print("eq Exception=", eq)
+        # st = latex2text.latex2text('$'+eq+'$')
         return "**Error**"
         # raise Exception
     
@@ -136,11 +145,5 @@ def spawn_workers():
         t.join()
 
 
-
-def get_final_text():
-    global file
-    return LatexNodes2Text().latex_to_text(file)
-
-
 if __name__ == "__main__":
-    main()
+    preprocess()
