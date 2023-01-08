@@ -6,7 +6,7 @@ from antlr4.error.ErrorListener import ErrorListener
 from sympy import srepr
 
 from sympy import (
-    E, I, oo, pi, sqrt, root, Symbol, Add, Mul, Pow, Abs, factorial, log, Eq, Ne, S, Rational, Integer, UnevaluatedExpr,
+    E, I, oo, pi, sqrt, root, Symbol, Add, Mul, Pow, Abs, factorial, log, Eq, Ne, S, Rational, Integer, Float, UnevaluatedExpr,
     sin, cos, tan, sinh, cosh, tanh, asin, acos, atan, asinh, acosh, atanh,
     csc, sec, Sum, Product, Limit, Integral, Derivative,
     LessThan, StrictLessThan, GreaterThan, StrictGreaterThan,
@@ -363,7 +363,9 @@ def mul_flat(lh, rh):
             args += [rh]
         return sympy.Mul(*args, evaluate=False)
     else:
-        return f'{lh} times {rh}' # Using times for flat multiplication
+        if (type(lh) == Integer or type(lh) == Float) and type(rh) == Symbol:
+            return f'{lh} {rh}'
+        return f'{lh} times {rh}' # Using times for flat multiplication if the lhs is not an imteger 
 
 
 def mat_mul_flat(lh, rh):

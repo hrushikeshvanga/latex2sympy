@@ -1,5 +1,6 @@
 
 from latex2sympy2 import latex2sympyStr
+import traceback
 
 
 def main():
@@ -18,19 +19,48 @@ def main():
         # r"e^{-2}",
 
         "---",
-
+        
+        #Derivatives tests
         r"\frac{\partial f(x,y)}{\partial x} ",
         r"\frac{df(x)}{dx} ",
         r"\frac{\partial}{\partial x} f(x,y) ",
         r"\frac{d}{dx} f(x)",
+        r"\frac{\partial}{\partial x} \frac{1}{xy} ",
+        r"\frac{d}{dx}  \frac{1}{xy}",
 
-        # r"f(x)",
-        # r"f(x+1)",
-        # r"f(x^2)",
-        # r"\sqrt{\frac{1}{x}}",
-        # r"\sum_{n = 0}^{\infty} \frac{1}{n!}",
-        # r"\prod^c_{a = b} x^{a!}",
-        # r"\log{e^{2*x!}}"
+        # Functions tests
+        r"f(x)",
+        r"f(x+1)",
+        r"f(x^2)",
+        r"\sqrt{\frac{1}{x}}",
+        r"\sum_{n = 0}^{\infty} \frac{1}{n!}",
+        r"\prod^c_{a = b} x^{a!}",
+        r"\log{e^{2*x!}}"
+
+        # Integer * Symbol tests
+        r"2x2y",
+        r"2x2",
+        r"2 4 2y",
+        r"24 y",
+        r"2 4 y",
+        r"2 4 y",
+
+
+        "---",
+        # Matrices
+        r"\begin{matrix}1&2\\3&4\end{matrix}",
+        r"\begin{bmatrix}1&2\\3&4\end{bmatrix}",
+        r"\begin{pmatrix}1&2\\3&4\end{pmatrix}",
+        # r"\begin{matrix}x&x^2\\\sqrt{x}&x\end{matrix}",
+        r"\begin{matrix}\sqrt{x}\\\sin(\theta)\end{matrix}",
+
+        "---",
+
+        r"\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}",
+        r"\\left{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right}",
+        r"\\left\\{\\begin{pmatrix}1\\\\2\\\\3\\end{pmatrix}\\right\\}",
+        r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
+        r"\begin{pmatrix}1\\2\\3\end{pmatrix},\begin{pmatrix}4\\3\\1\end{pmatrix}",
 
     ]
 
@@ -39,7 +69,13 @@ def main():
         if tex == '---':
             print("\n")
         else:
-            math = latex2sympyStr(tex)
-            print(tex, "-->", math)
+            try:
+                math = latex2sympyStr(tex)
+            except Exception as err:
+                # Print stack trace 
+                print(traceback.format_exc())
+                print(tex, f"--> Error: {err}")
+            else:
+                print(tex, "-->", math)
 
 main()
