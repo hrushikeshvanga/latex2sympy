@@ -6,7 +6,7 @@
 
 `latex2Text` parses **LaTeX math expressions** and converts it into the equivalent **plain text**. The latex2Text is adapted from [OrangeX4/latex2sympy](https://github.com/OrangeX4/latex2sympy) and [purdue-tlt / latex2sympy](https://github.com/purdue-tlt/latex2sympy).
 
-This project is a part of a VS Code extension called [Latex Sympy Calculator](https://marketplace.visualstudio.com/items?itemName=OrangeX4.latex-sympy-calculator). It is designed for providing people writing in latex or markdown a ability to calculate something when writing math expression.
+It is designed to increase accessibility as current pdf readers are really bad at reading latex.
 
 [ANTLR](http://www.antlr.org/) is used to generate the parser.
 
@@ -25,7 +25,7 @@ This project is a part of a VS Code extension called [Latex Sympy Calculator](ht
 ## Installation
 
 ```
-pip install latex2sympy2
+git clone maths-tts-org/latex2sympy
 ```
 
 **Requirements:** `sympy` and `antlr4-python3-runtime version 7.2` packages.
