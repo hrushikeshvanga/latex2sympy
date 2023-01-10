@@ -1,10 +1,10 @@
 ![Logo](https://picgo-1258602555.cos.ap-nanjing.myqcloud.com/icon.png)
 
-# [latex2sympy2](https://github.com/OrangeX4/latex2sympy)
+# [latex2Text](https://github.com/OrangeX4/latex2sympy)
 
 ## About
 
-`latex2sympy2` parses **LaTeX math expressions** and converts it into the equivalent **SymPy form**. The latex2sympy2 is adapted from [augustt198/latex2sympy](https://github.com/augustt198/latex2sympy) and [purdue-tlt / latex2sympy](https://github.com/purdue-tlt/latex2sympy).
+`latex2Text` parses **LaTeX math expressions** and converts it into the equivalent **plain text**. The latex2Text is adapted from [OrangeX4/latex2sympy](https://github.com/OrangeX4/latex2sympy) and [purdue-tlt / latex2sympy](https://github.com/purdue-tlt/latex2sympy).
 
 This project is a part of a VS Code extension called [Latex Sympy Calculator](https://marketplace.visualstudio.com/items?itemName=OrangeX4.latex-sympy-calculator). It is designed for providing people writing in latex or markdown a ability to calculate something when writing math expression.
 
