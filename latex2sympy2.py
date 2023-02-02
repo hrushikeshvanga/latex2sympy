@@ -43,6 +43,7 @@ VARIABLE_VALUES = {}
 def has_numbers(inputString):
     return bool(re.search(r'\d', inputString))
 
+
 def set_real(value):
     global is_real
     is_real = value
@@ -68,6 +69,12 @@ def latex2sympy(sympy: str, variable_values={}):
         frac_type = r'\tfrac'
     sympy = sympy.replace(r'\dfrac', r'\frac')
     sympy = sympy.replace(r'\tfrac', r'\frac')
+    # remove \Bigg and \Big parentheses - replace with normal parentheses
+    # latex2synmpy does not support \Bigg and \Big
+    sympy = sympy.replace(r'\Bigg', r'')
+    sympy = sympy.replace(r'\bigg', r'')
+    sympy = sympy.replace(r'\Big', r'')
+    sympy = sympy.replace(r'\big', r'')
     # Translate Derivative
     sympy = sympy.replace(r'\mathrm{d}', 'd', -1).replace(r'{\rm d}', 'd', -1)
     # Translate Matrix
@@ -80,6 +87,8 @@ def latex2sympy(sympy: str, variable_values={}):
     sympy = sympy.replace(r'\quad', ' ', -1).replace(r'\qquad', ' ', -1).replace(r'~', ' ', -1).replace(r'\,', ' ', -1)
     # Remove $
     sympy = sympy.replace(r'$', ' ', -1)
+    # remove '\ ' and replace with spaces
+    sympy = sympy.replace(r'\ ', ' ', -1)
 
     # variable values
     global VARIABLE_VALUES
@@ -122,8 +131,8 @@ def latex2sympy(sympy: str, variable_values={}):
     # if not, do default
     else:
         relation = math.relation()
-        #PRINT
-        #print(relation)
+        # PRINT
+        # print(relation)
         return_data = convert_relation(relation)
 
     return return_data
@@ -169,22 +178,22 @@ def convert_relation(rel):
     elif rel.GT():
         return f'{lh} is strictly greater than {rh}'
     elif rel.GTE():
-        return  f'{lh} is greater than equal to {rh}'
+        return f'{lh} is greater than equal to {rh}'
     elif rel.EQUAL():
         return f'{lh} equals {rh}'
     elif rel.ASSIGNMENT():
         # !Use Global variances
         if type(lh) == str:
-            return f"{lh} = {rh}"#sympy.Eq(lh, rh, evaluate=False)
-      
+            return f"{lh} = {rh}"  # sympy.Eq(lh, rh, evaluate=False)
+
         elif lh.is_Symbol:
             # set value
             variances[lh] = rh
             var[str(lh)] = rh
             return rh
         else:
-            #return equal expression
-            return f"{lh} = {rh}" #sympy.Eq(lh, rh, evaluate=False)
+            # return equal expression
+            return f"{lh} = {rh}"  # sympy.Eq(lh, rh, evaluate=False)
     elif rel.IN():
         # !Use Global variances
         if hasattr(rh, 'is_Pow') and rh.is_Pow and hasattr(rh.exp, 'is_Mul'):
@@ -201,7 +210,7 @@ def convert_relation(rel):
             raise Exception("Don't support this form of definition of matrix symbol.")
         return lh
     elif rel.UNEQUAL():
-        return f'{lh} not equals {rh}'                      #sympy.Ne(lh, rh, evaluate=False)
+        return f'{lh} not equals {rh}'  # sympy.Ne(lh, rh, evaluate=False)
 
 
 def convert_expr(expr):
@@ -302,7 +311,7 @@ def convert_matrix(matrix):
     return mat
 
 
-def add_flat(lh, rh, isList = False):
+def add_flat(lh, rh, isList=False):
     if hasattr(lh, 'is_Add') and lh.is_Add or hasattr(rh, 'is_Add') and rh.is_Add:
         args = []
         if hasattr(lh, 'is_Add') and lh.is_Add:
@@ -314,11 +323,12 @@ def add_flat(lh, rh, isList = False):
         else:
             args += [rh]
             argsString = " ".join(args)
-        return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
+        return f'Adding the following letters {argsString}'  # sympy.Add(*args, evaluate=False)
     else:
-        return f'{lh} + {rh}'  #sympy.Add(lh, rh, evaluate=False)
+        return f'{lh} + {rh}'  # sympy.Add(lh, rh, evaluate=False)
 
-def sub_flat(lh, rh, isList = False):
+
+def sub_flat(lh, rh, isList=False):
     if hasattr(lh, 'is_Add') and lh.is_Add or hasattr(rh, 'is_Add') and rh.is_Add:
         args = []
         if hasattr(lh, 'is_Add') and lh.is_Add:
@@ -330,9 +340,10 @@ def sub_flat(lh, rh, isList = False):
         else:
             args += [rh]
             argsString = " ".join(args)
-        return f'Adding the following letters {argsString}'     #sympy.Add(*args, evaluate=False)
+        return f'Adding the following letters {argsString}'  # sympy.Add(*args, evaluate=False)
     else:
-        return f'{lh} minus {rh}' 
+        return f'{lh} minus {rh}'
+
 
 def mat_add_flat(lh, rh):
     if hasattr(lh, 'is_MatAdd') and lh.is_MatAdd or hasattr(rh, 'is_MatAdd') and rh.is_MatAdd:
@@ -361,11 +372,11 @@ def mul_flat(lh, rh):
             args = args + list(rh.args)
         else:
             args += [rh]
-        return f'Multiplication of open bracket {"".join(args)} close bracket '                     #sympy.Mul(*args, evaluate=False)
+        return f'Multiplication of open bracket {"".join(args)} close bracket '  # sympy.Mul(*args, evaluate=False)
     else:
         if (type(lh) == Integer or type(lh) == Float) and type(rh) == Symbol:
             return f'{lh} {rh}'
-        return f'{lh} times {rh}' # Using times for flat multiplication if the lhs is not an imteger 
+        return f'{lh} times {rh}'  # Using times for flat multiplication if the lhs is not an imteger
 
 
 def mat_mul_flat(lh, rh):
@@ -396,9 +407,9 @@ def convert_add(add):
         lh = convert_add(add.additive(0))
         rh = convert_add(add.additive(1))
 
-        #bad fix for strings
+        # bad fix for strings
         if type(lh) == str or type(rh) == str:
-            return add_flat(lh, rh)   #bad fix for strings
+            return add_flat(lh, rh)  # bad fix for strings
         elif type(lh) != None and (lh.is_Matrix or rh.is_Matrix):
             return mat_add_flat(lh, rh)
         else:
@@ -408,7 +419,7 @@ def convert_add(add):
         rh = convert_add(add.additive(1))
 
         if type(lh) == str or type(rh) == str:
-            return sub_flat(lh, rh)   #bad fix for strings
+            return sub_flat(lh, rh)  # bad fix for strings
         if lh.is_Matrix or rh.is_Matrix:
             return mat_add_flat(lh, mat_mul_flat(-1, rh))
         else:
@@ -418,11 +429,10 @@ def convert_add(add):
                 rh = -rh
                 return add_flat(lh, rh)
             else:
-                #rh = mul_flat(-1, rh)
+                # rh = mul_flat(-1, rh)
                 return sub_flat(lh, rh)
     else:
         return convert_mp(add.mp())
-
 
 
 def convert_mp(mp):
@@ -438,7 +448,7 @@ def convert_mp(mp):
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if type(lh) == str or type(rh) == str:
-            return f'{lh} dot {rh}' #bad fix for strings. Also, using dot for matrix product
+            return f'{lh} dot {rh}'  # bad fix for strings. Also, using dot for matrix product
         elif lh.is_Matrix or rh.is_Matrix:
             return mat_mul_flat(lh, rh)
         else:
@@ -451,14 +461,14 @@ def convert_mp(mp):
         elif lh.is_Matrix or rh.is_Matrix:
             return sympy.MatMul(lh, sympy.Pow(rh, -1, evaluate=False), evaluate=False)
         else:
-            return f'{lh} over {rh}'                                       
+            return f'{lh} over {rh}'
     elif mp.CMD_MOD():
         lh = convert_mp(mp_left)
         rh = convert_mp(mp_right)
         if rh.is_Matrix:
             raise Exception("Cannot perform modulo operation with a matrix as an operand")
         else:
-            return f"{lh} mod {rh}"                
+            return f"{lh} mod {rh}"
     else:
         if hasattr(mp, 'unary'):
             return convert_unary(mp.unary())
@@ -477,7 +487,7 @@ def convert_unary(unary):
         postfix = [first] + tail
     else:
         postfix = unary.postfix()
-    
+
     if unary.ADD():
         return convert_unary(nested_unary)
     elif unary.SUB():
@@ -501,7 +511,7 @@ def convert_postfix_list(arr, i=0):
         raise Exception("Index out of bounds")
 
     res = convert_postfix(arr[i])
-    #PRINT
+    # PRINT
    # print('res: ', type(res), res)
     if isinstance(res, sympy.Expr) or isinstance(res, sympy.Matrix) or res is sympy.S.EmptySet:
         if i == len(arr) - 1:
@@ -516,7 +526,7 @@ def convert_postfix_list(arr, i=0):
             else:
                 return mul_flat(res, rh)
     elif type(res) == str:
-        #TBD
+        # TBD
         if i == len(arr) - 1:
             return res
         else:
@@ -530,7 +540,7 @@ def convert_postfix_list(arr, i=0):
     else:  # must be derivative
         wrt = res[0]
         if i == len(arr) - 1:
-            #return f'derivative of {wrt}'
+            # return f'derivative of {wrt}'
             raise Exception("Expected expression for derivative")
         else:
             expr = convert_postfix_list(arr, i + 1)
@@ -550,7 +560,7 @@ def do_subs(expr, at):
     elif at.equality():
         lh = convert_expr(at.equality().expr(0))
         rh = convert_expr(at.equality().expr(1))
-      
+
         return expr.subs(lh, rh)
 
 
@@ -565,7 +575,7 @@ def convert_postfix(postfix):
         if op.BANG():
             if isinstance(exp, list):
                 raise Exception("Cannot apply postfix to derivative")
-            exp = f"{exp} factorial" #sympy.factorial(exp, evaluate=False)
+            exp = f"{exp} factorial"  # sympy.factorial(exp, evaluate=False)
         elif op.eval_at():
             ev = op.eval_at()
             at_b = None
@@ -607,7 +617,7 @@ def convert_exp(exp):
             exponent = convert_atom(exp.atom())
         elif exp.expr():
             exponent = convert_expr(exp.expr())
-        return f'{base} to the power {exponent}' #sympy.Pow(base, exponent, evaluate=False)
+        return f'{base} to the power {exponent}'  # sympy.Pow(base, exponent, evaluate=False)
     else:
         if hasattr(exp, 'comp'):
             return convert_comp(exp.comp())
@@ -622,7 +632,7 @@ def convert_comp(comp):
             return 'opening bracket ' + res + ' closing bracket'
         return convert_expr(comp.group().expr())
     elif comp.abs_group():
-        return f"Absolute value of ({convert_expr(comp.abs_group().expr())})"  
+        return f"Absolute value of ({convert_expr(comp.abs_group().expr())})"
     elif comp.floor_group():
         return handle_floor(convert_expr(comp.floor_group().expr()))
     elif comp.ceil_group():
@@ -724,13 +734,13 @@ def convert_atom(atom):
                 return f"{atom_symbol} cubed"
             elif func_pow == -1:
                 return f"{atom_symbol} inverse"
-            return f"{atom_symbol} to the power {func_pow}"#sympy.Pow(atom_symbol, func_pow, evaluate=False)
+            return f"{atom_symbol} to the power {func_pow}"  # sympy.Pow(atom_symbol, func_pow, evaluate=False)
 
         return atom_symbol if not matrix_symbol else matrix_symbol
     elif atom.SYMBOL():
         s = atom.SYMBOL().getText().replace("\\$", "").replace("\\%", "")
         if s == "\\infty":
-            return "infinity" #sympy.oo
+            return "infinity"  # sympy.oo
         elif s == '\\pi':
             return sympy.pi
         elif s == '\\emptyset':
@@ -807,7 +817,7 @@ def rule2text(ctx):
 
 
 def convert_frac(frac):
-    #import pdb; pdb.set_trace();
+    # import pdb; pdb.set_trace();
     diff_op = False
     partial_op = False
     lower_itv = frac.lower.getSourceInterval()
@@ -850,7 +860,6 @@ def convert_frac(frac):
                 outStr += "partial "
             return outStr + f"derivative of {expr_top} with respect to {wrt}"
 
-
     expr_top = convert_expr(frac.upper)
     expr_bot = convert_expr(frac.lower)
     if type(expr_top) == str or type(expr_bot) == str:
@@ -858,14 +867,14 @@ def convert_frac(frac):
     elif expr_top.is_Matrix or expr_bot.is_Matrix:
         return f"{expr_top} times {expr_bot} inverse"
     else:
-       # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
-       return f"{expr_top} over {expr_bot}"
+        # return f'Fraction where numerator is {expr_top} and denominator is {expr_bot}'
+        return f"{expr_top} over {expr_bot}"
 
 
 def convert_binom(binom):
     expr_top = convert_expr(binom.upper)
     expr_bot = convert_expr(binom.lower)
-    return f'binomial expression where numerator is {expr_top} and denominator is {expr_bot}' #sympy.binomial(expr_top, expr_bot)
+    return f'binomial expression where numerator is {expr_top} and denominator is {expr_bot}'  # sympy.binomial(expr_top, expr_bot)
 
 
 def convert_func(func):
@@ -880,37 +889,37 @@ def convert_func(func):
         # change arc<trig> -> a<trig>
         if name in ["arcsin", "arccos", "arctan", "arccsc", "arcsec",
                     "arccot"]:
-        
+
             if name == "arccsc":
-                expr =  f'{name[:3]}-{"cosec"} of ({arg})'
+                expr = f'{name[:3]}-{"cosec"} of ({arg})'
             else:
                 expr = f'{name[:3]}-{name[3:]} of ({arg})'
-            #print(type(expr))
+            # print(type(expr))
         elif name in ["arsinh", "arcosh", "artanh"]:
             name = "arc-" + name[2:]
             expr = f'{name} of ({arg})'
-           
+
         elif name in ["arcsinh", "arccosh", "arctanh"]:
             expr = f'{name[:3]}-{name[3:]} of ({arg})'
-            #saving the name when converting latex to text
+            # saving the name when converting latex to text
         elif name == "operatorname":
             operatorname = func.func_normal_single_arg().func_operator_name.getText()
 
             if operatorname in ["arsinh", "arcosh", "artanh"]:
                 operatorname = "arc-" + operatorname[2:]
                 expr = f'{operatorname} of ({arg})'
-            
+
             elif operatorname in ["arcsinh", "arccosh", "arctanh"]:
                 operatorname = "arc-" + operatorname[3:]
                 expr = f'{operatorname} of ({arg})'
-              
+
             elif operatorname == "floor":
                 expr = handle_floor(arg)
             elif operatorname == "ceil":
                 expr = handle_ceil(arg)
         elif name in ["log", "ln"]:
             if func.subexpr():
-                if func.subexpr().atom(): #potentially need to be changed
+                if func.subexpr().atom():  # potentially need to be changed
                     base = convert_atom(func.subexpr().atom())
                 else:
                     base = convert_expr(func.subexpr().expr())
@@ -918,18 +927,18 @@ def convert_func(func):
                 base = 10
             elif name == "ln":
                 base = sympy.E
-            expr = f"log base {base} of {arg}"                        
+            expr = f"log base {base} of {arg}"
         elif name in ["exp", "exponentialE"]:
-            expr = f"e raised to the {arg}"                 
+            expr = f"e raised to the {arg}"
         elif name == "floor":
-            expr = f"floor of {arg}"                                        
+            expr = f"floor of {arg}"
         elif name == "ceil":
-            expr = f"ceiling of {arg}"                                   
+            expr = f"ceiling of {arg}"
 
         func_pow = None
         should_pow = True
         if func.supexpr():
-            if func.supexpr().expr():   #potentially need to be changed
+            if func.supexpr().expr():  # potentially need to be changed
                 func_pow = convert_expr(func.supexpr().expr())
             else:
                 func_pow = convert_atom(func.supexpr().atom())
@@ -939,11 +948,11 @@ def convert_func(func):
                 name = "a" + name
                 should_pow = False
             expr = f'{name} of ({arg})'
-            #expr = getattr(sympy.functions, name)(arg, evaluate=False)
+            # expr = getattr(sympy.functions, name)(arg, evaluate=False)
 
         if func_pow and should_pow:
             expr = f"{expr} raised to the power {func_pow}"
-            #expr = sympy.Pow(expr, func_pow, evaluate=False)
+            # expr = sympy.Pow(expr, func_pow, evaluate=False)
 
         return expr
 
@@ -953,7 +962,7 @@ def convert_func(func):
         else:
             args = func.func_multi_arg_noparens().split(",")
 
-        #maybe need to be changed
+        # maybe need to be changed
         args = list(map(lambda arg: latex2sympy(arg, VARIABLE_VALUES), args))
         name = func.func_normal_multi_arg().start.text[1:]
 
@@ -965,7 +974,7 @@ def convert_func(func):
             expr = handle_gcd_lcm(name, args)
         elif name in ["max", "min"]:
             name = name[0].upper() + name[1:]
-            expr =  f"{name} of {''.join(args)}"            
+            expr = f"{name} of {''.join(args)}"
 
         func_pow = None
         should_pow = True
@@ -976,7 +985,7 @@ def convert_func(func):
                 func_pow = convert_atom(func.supexpr().atom())
 
         if func_pow and should_pow:
-            expr = f'{expr} raised to the power {func_pow}'                
+            expr = f'{expr} raised to the power {func_pow}'
         return expr
     elif func.atom_expr_no_supexpr():
         f = sympy.Function(func.atom_expr_no_supexpr().getText())
@@ -986,37 +995,37 @@ def convert_func(func):
             args = args[:-1]
         args = [latex2sympy(arg, VARIABLE_VALUES) for arg in args]
         # supexpr
-        if func.supexpr(): #potentially need to be changed
+        if func.supexpr():  # potentially need to be changed
             if func.supexpr().expr():
                 expr = convert_expr(func.supexpr().expr())
             else:
                 expr = convert_atom(func.supexpr().atom())
-            
-            return f"({f} evaluated at {args}) raised to the {expr}" 
+
+            return f"({f} evaluated at {args}) raised to the {expr}"
         else:
             argsString = [str(arg) for arg in args]
             String = ','.join(argsString)
             print(String)
             andPos = -1
-            for i in range(len(String)-1, -1, -1):
+            for i in range(len(String) - 1, -1, -1):
                 if String[i] == ',':
                     andPos = i
-                    break  
+                    break
 
             if andPos != -1:
-                String = String[:andPos] + ' and ' + String[andPos+1:]
+                String = String[:andPos] + ' and ' + String[andPos + 1:]
             return f"{f} of {String}"
-        
+
     elif func.FUNC_INT():
         return handle_integral(func)
     elif func.FUNC_SQRT():
         expr = convert_expr(func.base)
         if func.root:
             r = convert_expr(func.root)
-            return f"{expr} raised to the power {1/r}"                            
+            return f"{expr} raised to the power {1/r}"
         else:
-            return f"{expr} raised to the power {1/2}" 
-            #return sympy.Pow(expr, sympy.S.Half, evaluate=False)
+            return f"{expr} raised to the power {1/2}"
+            # return sympy.Pow(expr, sympy.S.Half, evaluate=False)
     elif func.FUNC_SUM():
         return handle_sum_or_prod(func, "summation")
     elif func.FUNC_PROD():
@@ -1064,7 +1073,7 @@ def handle_integral(func):
             integrand = integrand.subs(int_sym, 1)
         else:
             # Assume dx by default
-            int_var = 'x'              
+            int_var = 'x'
 
     if func.subexpr():
         if func.subexpr().atom():
@@ -1075,9 +1084,9 @@ def handle_integral(func):
             upper = convert_atom(func.supexpr().atom())
         else:
             upper = convert_expr(func.supexpr().expr())
-        return f"Integral of {integrand} from {lower} to {upper} with respect to {int_var}"                         
+        return f"Integral of {integrand} from {lower} to {upper} with respect to {int_var}"
     else:
-        return f"Integral of {integrand} with respect to {int_var}"                                              
+        return f"Integral of {integrand} with respect to {int_var}"
 
 
 def handle_sum_or_prod(func, name):
@@ -1090,9 +1099,9 @@ def handle_sum_or_prod(func, name):
         end = convert_atom(func.supexpr().atom())
 
     if name == "summation":
-        return f"The summation from {iter_var} equals {start} to {end} of {val}"#sympy.Sum(val, (iter_var, start, end))
+        return f"The summation from {iter_var} equals {start} to {end} of {val}"  # sympy.Sum(val, (iter_var, start, end))
     elif name == "product":
-        return f"The product from {iter_var} equals {start} to {end} of {val}" 
+        return f"The product from {iter_var} equals {start} to {end} of {val}"
 
 
 def handle_limit(func):
@@ -1112,7 +1121,7 @@ def handle_limit(func):
     approaching = convert_expr(sub.expr())
     content = convert_mp(func.mp())
 
-    #return sympy.Limit(content, var, approaching, direction)
+    # return sympy.Limit(content, var, approaching, direction)
     return f"Limit of {content} as {var} approaches {approaching}"
 
 
@@ -1144,7 +1153,7 @@ def handle_gcd_lcm(f, args):
     if f == "gcd":
         return "GCD of " + str(args)
     else:
-        return "LCM of " +str(args)                                  
+        return "LCM of " + str(args)
 
 
 def handle_floor(expr):
@@ -1153,7 +1162,7 @@ def handle_floor(expr):
 
     expr: Expr - sympy expression as an argument to floor()
     """
-    return  f"floor of {expr}"              
+    return f"floor of {expr}"
 
 
 def handle_ceil(expr):
@@ -1162,7 +1171,7 @@ def handle_ceil(expr):
 
     expr: Expr - sympy expression as an argument to ceil()
     """
-    return f"ceiling of {expr}"                                               
+    return f"ceiling of {expr}"
 
 
 def get_differential_var(d):
@@ -1199,7 +1208,7 @@ def latex2latex(tex):
     if isinstance(result, list):
         return latex(result)
     else:
-        return result#latex(simplify(result.subs(variances).doit().doit()))
+        return result  # latex(simplify(result.subs(variances).doit().doit()))
 
 
 # Set image value
@@ -1214,6 +1223,7 @@ for i in range(1, 10):
     variances[lh_m] = rh
     var[str(lh)] = rh
 
+
 def latex2sympyStr(tex):
     result = latex2sympy(tex)
     if type(result) == str:
@@ -1224,17 +1234,16 @@ def latex2sympyStr(tex):
         except Exception:
             return "Cannot get String representation of result"
 
-if __name__ == '__main__':
-  
 
-    test5 =  "a \\div b"
+if __name__ == '__main__':
+
+    test5 = "a \\div b"
     test6 = "100!"
-  
 
     tex = r"\frac{a}{b} + \frac{c}{d}"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
-    #math = math.subs(variances)
+    # math = math.subs(variances)
     print("latex:", tex)
     # print("var:", variances)
     print("raw_math:", math)
@@ -1242,20 +1251,18 @@ if __name__ == '__main__':
     tex = r"\frac{a}{b + \frac{c}{d}}"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
-    #math = math.subs(variances)
+    # math = math.subs(variances)
     print("latex:", tex)
     # print("var:", variances)
     print("raw_math:", math)
-
 
     tex = r"a + b + c + d + e + c + d"
     # print("latex2latex:", latex2latex(tex))
     math = latex2sympy(tex)
-    #math = math.subs(variances)
+    # math = math.subs(variances)
     print("latex:", tex)
     # print("var:", variances)
     print("raw_math:", math)
-
 
     tex = r"a * b + c * d + e * c * d"
     # print("latex2latex:", latex2latex(tex))

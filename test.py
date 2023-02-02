@@ -34,39 +34,39 @@ def main():
         r"\ln x",
         r"aX^2 + bX + c",
         r'(4a)X^2 + (4a + 2b)X + (a + b + c)',
-      r'''
+        r'''
     \begin{pmatrix}
         1 & 2 & 3 \\ 
         4 & 5 & 6 \\
         7 & 8 & 9 \\ 
     \end{pmatrix}
 ''',
- r"a * b + c * d + e * c * d",
-  r"\sum_{n=1}^{\infty} 2^{-n} = 1",
-  r'''\lim_{n\to\infty} \exp(-(n+1)^n)''',
-  r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)''',
-  r"T(X^2) = X^2 + 2X + 1 = 1(1) + 2(X) + 1(X^2)",
-  "\\int \\frac{1}{x} + 1 dx",
-  "\\int \\frac{1}{a} + \\frac{1}{b} dx",
-  "\\int (x+a)",
-  "\\int a + b + c dx",
-  "\\log_{a^2} x",
-  "a - b",
-  "\\emptyset",
-  "\\ln\\left(\\left|x-\\theta\\right|\\right)",
-  r'\int{a}^b\int{c}^d f(x)dxdy' ,
-  "\\binom{16}{2}",
-  "\\binom{16+2}{\\frac{4}{2}}",
-  "\\binom{\\theta}{\\gamma}",
-  "128*10^300\\mod 876123",
-  "123123\\mod -541",
-  "\\sin(x)*e^x",
-  "f(x, y, z)"
+        r"a * b + c * d + e * c * d",
+        r"\sum_{n=1}^{\infty} 2^{-n} = 1",
+        r'''\lim_{n\to\infty} \exp(-(n+1)^n)''',
+        r'''(n*(n + 1) + n + 2 + 3 + 4 + 5)''',
+        r"T(X^2) = X^2 + 2X + 1 = 1(1) + 2(X) + 1(X^2)",
+        "\\int \\frac{1}{x} + 1 dx",
+        "\\int \\frac{1}{a} + \\frac{1}{b} dx",
+        "\\int (x+a)",
+        "\\int a + b + c dx",
+        "\\log_{a^2} x",
+        "a - b",
+        "\\emptyset",
+        "\\ln\\left(\\left|x-\\theta\\right|\\right)",
+        r'\int{a}^b\int{c}^d f(x)dxdy',
+        "\\binom{16}{2}",
+        "\\binom{16+2}{\\frac{4}{2}}",
+        "\\binom{\\theta}{\\gamma}",
+        "128*10^300\\mod 876123",
+        "123123\\mod -541",
+        "\\sin(x)*e^x",
+        "f(x, y, z)",
+        "e^{\pi i} + 1 = 0"
     ]
     for tex in testList:
         math = latex2sympyStr(tex)
         print(tex, "-->", math)
-
 
 
 main()
