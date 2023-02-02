@@ -7,8 +7,17 @@ Note: ssml must be well-formed according to:
 from google.cloud import texttospeech
 from google.cloud.texttospeech_v1.types import SynthesizeSpeechResponse
 
-import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account_key.json"
+# NOTE: We need the GOOGLE_APPLICATION_CREDENTIALS environment variable to be set
+# When running this file manually (to test the TTS server), uncomment the lines below, making sure ou have `service_account.json` in the same directory as this file
+
+# While running the server, the environment variable is set automatically by Cloud Run
+# When running locally from the server, the environment variable is set automatically by the server
+# import os
+
+# # Inside Cloud Run, the service account key is stored in the environment variable automatically
+# # but locally, we need to set it manually
+# if os.environ.get('GOOGLE_APPLICATION_CREDENTIALS') is None:
+#     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account_key.json"
 
 
 def generate_mp3(words: str) -> bytes:
