@@ -617,7 +617,7 @@ def convert_exp(exp):
             exponent = convert_atom(exp.atom())
         elif exp.expr():
             exponent = convert_expr(exp.expr())
-        return f'{base} to the power {exponent}'  # sympy.Pow(base, exponent, evaluate=False)
+        return f'{base} to the power of {exponent}'  # sympy.Pow(base, exponent, evaluate=False)
     else:
         if hasattr(exp, 'comp'):
             return convert_comp(exp.comp())
@@ -1136,7 +1136,7 @@ def handle_exp(func):
     if exp_arg == 1:
         return "e"
 
-    return f"e raised to the power{exp_arg}"
+    return f"e raised to the power of {exp_arg}"
 
 
 def handle_gcd_lcm(f, args):
