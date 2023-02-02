@@ -15,7 +15,7 @@ def generate_mp3(words: str) -> bytes:
     # Instantiates a client
     client = texttospeech.TextToSpeechClient()
 
-    print(f'Text to speech: reading {words}')
+    print(f'  -> Text to speech: reading {words}')
     synthesis_input = texttospeech.SynthesisInput(text=words)
 
     # Build the voice request, select the language code ("en-US") and the ssml
@@ -24,7 +24,6 @@ def generate_mp3(words: str) -> bytes:
         language_code="en-US", name="en-US-Neural2-D"
     )
 
-    print('git here 0')
     # Select the type of audio file you want returned
     audio_config = texttospeech.AudioConfig(
         audio_encoding=texttospeech.AudioEncoding.MP3
@@ -32,11 +31,11 @@ def generate_mp3(words: str) -> bytes:
 
     # Perform the text-to-speech request on the text input with the selected
     # voice parameters and audio file type
-    print('got here 1')
     response = client.synthesize_speech(
         input=synthesis_input, voice=voice, audio_config=audio_config
     )
 
+    print(f'  -> Text to speech: done')
     # The response's audio_content is binary.
     return response.audio_content
 
