@@ -46,7 +46,7 @@ def generate_mp3(words: str) -> bytes:
 
     print(f'  -> Text to speech: done')
     # The response's audio_content is binary.
-    return response.audio_content
+    return bytes(response.audio_content)
 
     # filename = "output.mp3"
     # with open(filename, "wb") as out:
