@@ -750,7 +750,11 @@ def convert_atom(atom):
     elif atom.NUMBER():
         s = atom.NUMBER().getText().replace(",", "")
         try:
-            sr = sympy.Rational(s)
+            # sr = sympy.Rational(s)
+            if "." in s:
+                sr = sympy.Float(s, len(s.split(".")[1]) + 1)
+            else:
+                sr = sympy.Integer(s)
             return sr
         except (TypeError, ValueError):
             return sympy.Number(s)
