@@ -1229,10 +1229,11 @@ def latex2sympyStr(tex):
     if type(result) == str:
         return result
     else:
-        try:
-            return srepr(result)
-        except Exception:
-            return "Cannot get String representation of result"
+        # try:
+        #     return srepr(result)
+        # except Exception:
+        #     return "Cannot get String representation of result"
+        raise ValueError(f"Cannot get String representation of tex: [{tex}]")
 
 
 if __name__ == '__main__':
